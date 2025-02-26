@@ -1,0 +1,61 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment files
+.env
+*.env
+.env.*
+
+# Config files that might contain sensitive information
+config/*.local.yaml
+config/config.yaml
+config/firebase-credentials.json
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+
+# Redis dump file
+dump.rdb
+
+# MongoDB data directory
+data/mongodb/
+
+# Debug files
+__debug_bin
+debug
+
+# Air live reload
+tmp/
+
+# Test coverage
+coverage.out
+coverage/ 

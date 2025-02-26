@@ -1,0 +1,5 @@
+mongodb:
+  uri: mongodb://incomplete:pass@localhost:27017
+
+redis:
+  host: incomplete-redis:6379

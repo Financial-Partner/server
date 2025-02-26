@@ -1,0 +1,12 @@
+mongodb:
+  uri: mongodb://user:pass@localhost:27017
+  database: testdb
+
+redis:
+  host: localhost:6379
+  password: redispass
+  db: 1
+
+firebase:
+  project_id: test-project
+  credential_file: creds.json
