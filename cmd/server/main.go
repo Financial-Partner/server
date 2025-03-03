@@ -12,7 +12,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	_ "github.com/Financial-Partner/server/docs"
 	"github.com/Financial-Partner/server/internal/config"
 	userDomain "github.com/Financial-Partner/server/internal/domain/user"
 	authInfra "github.com/Financial-Partner/server/internal/infrastructure/auth"
@@ -23,6 +22,7 @@ import (
 	redis "github.com/Financial-Partner/server/internal/infrastructure/persistence/redis"
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/middleware"
+	_ "github.com/Financial-Partner/server/swagger"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 

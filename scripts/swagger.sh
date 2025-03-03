@@ -7,6 +7,6 @@ if ! command -v swag &> /dev/null; then
 fi
 
 echo "Generating Swagger documentation..."
-swag init -g cmd/server/main.go -o ./docs
+swag init -g cmd/server/main.go -o ./swagger
 
 echo "Swagger documentation generated successfully." 
