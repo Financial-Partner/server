@@ -2,6 +2,8 @@
 
 理財小夥伴後端服務，提供使用者記帳、預算管理等功能的 API 服務。
 
+[API Document](https://financial-partner.github.io/server)
+
 ## 前置準備
 
 1. 放置必要檔案：
@@ -79,6 +81,4 @@ docker-compose -f docker-compose.dev.yml up -d --build
 
 ### 查看文件
 
-```bash
 http://localhost:8080/swagger/index.html
-```
