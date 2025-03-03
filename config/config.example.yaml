@@ -9,4 +9,4 @@ redis:
 
 firebase:
   project_id: "your-project-id"
-  credential_file: "path/to/firebase-credentials.json" 
+  credential_file: "config/firebase_credential.json" 

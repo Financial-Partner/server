@@ -1,6 +1,25 @@
 version: '3.8'
 
 services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PARTNER_SERVER_MONGODB_URI=mongodb://root:password@mongodb:27017
+      - PARTNER_SERVER_MONGODB_DATABASE=gamedb
+      - PARTNER_SERVER_REDIS_HOST=redis:6379
+      - PARTNER_SERVER_REDIS_PASSWORD=
+      - PARTNER_SERVER_REDIS_DB=0
+    volumes:
+      - ./config/config.example.yaml:/app/config/config.yaml:ro
+      - ./config/firebase_credential.json:/app/config/firebase_credential.json:ro
+    depends_on:
+      - redis
+      - mongodb
+
   redis:
     image: redis:7.2-alpine
     ports:

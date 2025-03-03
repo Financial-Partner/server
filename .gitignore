@@ -59,3 +59,5 @@ tmp/
 # Test coverage
 coverage.out
 coverage/ 
+
+firebase_credential.json
