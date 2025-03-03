@@ -46,5 +46,5 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(userEntity)
+	_ = json.NewEncoder(w).Encode(userEntity)
 }

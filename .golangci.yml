@@ -1,0 +1,33 @@
+linters:
+  enable:
+    - gofmt
+    - govet
+    - gosimple
+    - ineffassign
+    - staticcheck
+    - typecheck
+    - unused
+    - misspell
+    - errcheck
+    - gosec
+
+linters-settings:
+  gofmt:
+    simplify: true
+  
+run:
+  deadline: 5m
+  tests: true
+
+issues:
+  exclude-dirs:
+    - vendor/
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+
+output:
+  formats: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true

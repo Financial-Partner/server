@@ -12,21 +12,34 @@
    └── firebase_credential.json # Firebase Admin SDK 憑證
    ```
 
-2. 安裝 air（可選，用於本地開發熱重載）：
+2. 安裝開發工具：
    ```bash
-   # 使用 go install 安裝
+   # 安裝 air（用於本地開發熱重載，可選）
    go install github.com/cosmtrek/air@latest
 
-   # 確認 air 已安裝
-   air -v
+   # 執行設定腳本（安裝 linter 和設定 Git Hooks）
+   ./scripts/setup.sh
    ```
+
+## 開發規範
+
+專案使用 Git Hooks 進行程式碼品質控管：
+
+- **Pre-commit**: 執行 lint 檢查，包含：
+  - 程式碼格式檢查 (gofmt)
+  - 靜態程式碼分析
+  - 安全性檢查
+
+- **Pre-push**: 執行所有檢查，包含：
+  - 所有 pre-commit 檢查
+  - 單元測試
 
 ## 啟動服務
 
 ### 只啟動依賴服務（MongoDB、Redis）
 
 ```bash
-# 啟動所有依賴服務
+# 啟動 MongoDB 和 Redis
 docker-compose up -d
 
 # 只啟動特定服務
@@ -34,22 +47,20 @@ docker-compose up -d mongodb
 docker-compose up -d redis
 ```
 
-### 本地開發
+### 本地開發（使用 air）
 
-使用 air
 ```bash
 air
 ```
 
-直接啟動
-```bash
-go run cmd/server/main.go
-```
-
-### 使用 Docker 啟動完整環境（包含 API 服務）
+### 使用 Docker 啟動完整環境
 
 ```bash
+# 啟動所有服務（API、MongoDB、Redis）
+docker-compose -f docker-compose.dev.yml up --build
+
+# 背景執行
 docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
-服務啟動後，API 可通過 http://localhost:8080
+服務啟動後，API 可通過 http://localhost:8080 訪問

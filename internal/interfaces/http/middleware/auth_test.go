@@ -17,6 +17,8 @@ import (
 	middleMocks "github.com/Financial-Partner/server/internal/interfaces/http/middleware/mocks"
 )
 
+type contextKey string
+
 func TestNewAuthMiddleware(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -229,7 +231,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 		})
 
-		originalCtx := context.WithValue(context.Background(), "test-key", "test-value")
+		originalCtx := context.WithValue(context.Background(), contextKey("test-key"), "test-value")
 		req := httptest.NewRequest("GET", "/api/test", nil).WithContext(originalCtx)
 		req.Header.Set("Authorization", "Bearer valid-token")
 		w := httptest.NewRecorder()
@@ -238,7 +240,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		handler.ServeHTTP(w, req)
 
 		require.NotNil(t, capturedCtx)
-		assert.Equal(t, "test-value", capturedCtx.Value("test-key"))
+		assert.Equal(t, "test-value", capturedCtx.Value(contextKey("test-key")))
 
 		email, ok := contextutil.GetUserEmail(capturedCtx)
 		assert.True(t, ok)
