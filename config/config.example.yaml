@@ -1,3 +1,7 @@
+server:
+  host: localhost
+  port: 8080
+
 mongodb:
   uri: "mongodb://root:password@localhost:27017"
   database: "gamedb"

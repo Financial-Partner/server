@@ -1,0 +1,67 @@
+basePath: /api
+definitions:
+  user.UserEntity:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+      wallet:
+        $ref: '#/definitions/user.WalletEntity'
+    type: object
+  user.WalletEntity:
+    properties:
+      diamonds:
+        type: integer
+      savings:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: API for the Financial Partner application
+  title: Financial Partner API
+  version: "1.0"
+paths:
+  /users/me:
+    get:
+      consumes:
+      - application/json
+      description: Get user information by email from context. If user doesn't exist,
+        a new user will be created.
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved user information
+          schema:
+            $ref: '#/definitions/user.UserEntity'
+        "400":
+          description: Bad Request - Invalid token format
+          schema:
+            type: string
+        "401":
+          description: Unauthorized - Invalid or missing token
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      security:
+      - BearerAuth: []
+      summary: Get user information
+      tags:
+      - users
+swagger: "2.0"

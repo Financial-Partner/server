@@ -1,9 +1,15 @@
 package config
 
 type Config struct {
+	Server   Server   `mapstructure:"server"`
 	MongoDB  Mongo    `mapstructure:"mongodb"`
 	Redis    Redis    `mapstructure:"redis"`
 	Firebase Firebase `mapstructure:"firebase"`
+}
+
+type Server struct {
+	Host string `mapstructure:"host"`
+	Port string `mapstructure:"port"`
 }
 
 type Mongo struct {

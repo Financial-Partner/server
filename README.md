@@ -64,3 +64,21 @@ docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
 服務啟動後，API 可通過 http://localhost:8080 訪問
+
+## API 文件
+
+使用 Swagger 撰寫 API 文件和提供互動式 UI。
+
+### 更新文件
+
+當 API 有變動時，執行：
+
+```bash
+./scripts/swagger.sh
+```
+
+### 查看文件
+
+```bash
+http://localhost:8080/swagger/index.html
+```

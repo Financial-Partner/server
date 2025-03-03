@@ -29,6 +29,18 @@ func NewHandler(us UserService, log logger.Logger) *Handler {
 	}
 }
 
+// @Summary Get user information
+// @Description Get user information by email from context. If user doesn't exist, a new user will be created.
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param Authorization header string true "Bearer {token}" default "Bearer "
+// @Success 200 {object} user.UserEntity "Successfully retrieved user information"
+// @Failure 400 {string} string "Bad Request - Invalid token format"
+// @Failure 401 {string} string "Unauthorized - Invalid or missing token"
+// @Failure 500 {string} string "Internal server error"
+// @Router /users/me [get]
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	email := r.Context().Value(contextutil.UserEmailKey)
 	if email == nil {

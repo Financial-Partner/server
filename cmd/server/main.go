@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/gorilla/mux"
 
+	_ "github.com/Financial-Partner/server/docs"
 	"github.com/Financial-Partner/server/internal/config"
 	userDomain "github.com/Financial-Partner/server/internal/domain/user"
 	authInfra "github.com/Financial-Partner/server/internal/infrastructure/auth"
@@ -21,8 +23,13 @@ import (
 	redis "github.com/Financial-Partner/server/internal/infrastructure/persistence/redis"
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/middleware"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Financial Partner API
+// @version 1.0
+// @description API for the Financial Partner application
+// @BasePath /api
 func main() {
 	log := loggerInfra.GetLogger()
 
@@ -59,20 +66,32 @@ func main() {
 
 	router := mux.NewRouter()
 
+	apiBaseURL := url.URL{
+		Scheme: "http",
+		Host:   cfg.Server.Host + ":" + cfg.Server.Port,
+	}
+
+	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
+		httpSwagger.URL(apiBaseURL.String()+"/swagger/doc.json"),
+		httpSwagger.DeepLinking(true),
+		httpSwagger.DocExpansion("none"),
+		httpSwagger.DomID("swagger-ui"),
+	))
+
 	api := router.PathPrefix("/api").Subrouter()
 	api.Use(authMiddleware.Authenticate)
 
 	api.HandleFunc("/users/me", handlers.GetUser).Methods(http.MethodGet)
 
 	srv := &http.Server{
-		Addr:         ":8080",
+		Addr:         ":" + cfg.Server.Port,
 		Handler:      router,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
 
-	log.Infof("Server is starting on port 8080")
+	log.Infof("Server is starting on port %s", cfg.Server.Port)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		log.WithError(err).Fatalf("Server failed to start")
 	}
