@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - CONFIG_PATH=/app/config/config.local.yaml
+      - MONGODB_USER=root
+      - MONGODB_PASSWORD=password
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=gamedb
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - REDIS_DB=0
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+    volumes:
+      - ./config/config.local.yaml:/app/config/config.local.yaml:ro
+      - ./config/firebase_credential.json:/app/config/firebase_credential.json:ro
+    depends_on:
+      - redis
+      - mongodb
+
+  redis:
+    extends:
+      file: docker-compose.yml
+      service: redis
+
+  mongodb:
+    extends:
+      file: docker-compose.yml
+      service: mongodb
+
+volumes:
+  redis_data:
+  mongodb_data: 
