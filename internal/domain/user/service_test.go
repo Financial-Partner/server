@@ -7,6 +7,7 @@ import (
 
 	"github.com/Financial-Partner/server/internal/domain/user"
 	"github.com/Financial-Partner/server/internal/domain/user/mocks"
+	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/infrastructure/logger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -26,7 +27,7 @@ func TestService(t *testing.T) {
 		ctx := context.Background()
 		email := "test@example.com"
 
-		expectedUser := &user.UserEntity{
+		expectedUser := &entities.User{
 			Email: email,
 			Name:  "Test User",
 		}
@@ -51,7 +52,7 @@ func TestService(t *testing.T) {
 		email := "test@example.com"
 
 		storeErr := errors.New("not found in store")
-		expectedUser := &user.UserEntity{
+		expectedUser := &entities.User{
 			Email: email,
 			Name:  "Test User",
 		}
@@ -78,7 +79,7 @@ func TestService(t *testing.T) {
 		email := "test@example.com"
 
 		storeErr := errors.New("not found in store")
-		expectedUser := &user.UserEntity{
+		expectedUser := &entities.User{
 			Email: email,
 			Name:  "Test User",
 		}
@@ -128,7 +129,7 @@ func TestService(t *testing.T) {
 		email := "test@example.com"
 		name := "Existing User"
 
-		existingUser := &user.UserEntity{
+		existingUser := &entities.User{
 			Email: email,
 			Name:  name,
 		}
@@ -158,12 +159,12 @@ func TestService(t *testing.T) {
 		mockStore.EXPECT().Get(ctx, email).Return(nil, storeErr)
 		mockRepo.EXPECT().FindByEmail(ctx, email).Return(nil, repoErr)
 
-		createdUser := &user.UserEntity{
+		createdUser := &entities.User{
 			Email: email,
 			Name:  name,
 		}
 		mockRepo.EXPECT().Create(ctx, gomock.Any()).DoAndReturn(
-			func(ctx context.Context, entity *user.UserEntity) (*user.UserEntity, error) {
+			func(ctx context.Context, entity *entities.User) (*entities.User, error) {
 				assert.Equal(t, email, entity.Email)
 				assert.Equal(t, name, entity.Name)
 				return createdUser, nil
@@ -194,12 +195,12 @@ func TestService(t *testing.T) {
 		mockStore.EXPECT().Get(ctx, email).Return(nil, storeErr)
 		mockRepo.EXPECT().FindByEmail(ctx, email).Return(nil, repoErr)
 
-		createdUser := &user.UserEntity{
+		createdUser := &entities.User{
 			Email: email,
 			Name:  name,
 		}
 		mockRepo.EXPECT().Create(ctx, gomock.Any()).DoAndReturn(
-			func(ctx context.Context, entity *user.UserEntity) (*user.UserEntity, error) {
+			func(ctx context.Context, entity *entities.User) (*entities.User, error) {
 				assert.Equal(t, email, entity.Email)
 				assert.Equal(t, name, entity.Name)
 				return createdUser, nil

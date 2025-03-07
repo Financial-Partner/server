@@ -4,46 +4,185 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/Financial-Partner/server/internal/contextutil"
-	"github.com/Financial-Partner/server/internal/domain/user"
+	"github.com/Financial-Partner/server/internal/entities"
+	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 )
 
-//go:generate mockgen -source=handler.go -destination=mocks/handler_mock.go -package=mocks
+//go:generate mockgen -source=user.go -destination=mocks/user_mock.go -package=mocks
 
 type UserService interface {
-	GetUser(ctx context.Context, email string) (*user.UserEntity, error)
-	GetOrCreateUser(ctx context.Context, email, name string) (*user.UserEntity, error)
+	GetUser(ctx context.Context, email string) (*entities.User, error)
+	GetOrCreateUser(ctx context.Context, email, name string) (*entities.User, error)
+	UpdateUserName(ctx context.Context, email, name string) (*entities.User, error)
 }
 
-// @Summary Get user information
-// @Description Get user information by email from context. If user doesn't exist, a new user will be created.
+// CreateUser CreateUser
+// @Summary CreateUser
+// @Description Create a new user when first login
 // @Tags users
 // @Accept json
 // @Produce json
 // @Security BearerAuth
 // @Param Authorization header string true "Bearer {token}" default "Bearer "
-// @Success 200 {object} user.UserEntity "Successfully retrieved user information"
-// @Failure 400 {string} string "Bad Request - Invalid token format"
-// @Failure 401 {string} string "Unauthorized - Invalid or missing token"
-// @Failure 500 {string} string "Internal server error"
+// @Param request body dto.CreateUserRequest true "Create user request"
+// @Success 200 {object} dto.CreateUserResponse "Create user successfully"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request format"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "Internal server error"
+// @Router /users [post]
+func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var req dto.CreateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.log.WithError(err).Warnf("Invalid request format")
+		h.RespondWithError(w, r, h.log, err, ErrInvalidRequest, http.StatusBadRequest)
+		return
+	}
+
+	ctxEmail := r.Context().Value(contextutil.UserEmailKey)
+	if ctxEmail == nil || ctxEmail.(string) != req.Email {
+		h.log.Warnf("Email mismatch or not found in context")
+		h.RespondWithError(w, r, h.log, nil, ErrEmailMismatch, http.StatusUnauthorized)
+		return
+	}
+
+	userEntity, err := h.userService.GetOrCreateUser(r.Context(), req.Email, req.Name)
+	if err != nil {
+		h.log.WithError(err).Errorf("Failed to create user")
+		h.RespondWithError(w, r, h.log, err, ErrFailedToCreateUser, http.StatusInternalServerError)
+		return
+	}
+
+	response := dto.CreateUserResponse{
+		ID:        userEntity.ID.Hex(),
+		Email:     userEntity.Email,
+		Name:      userEntity.Name,
+		Diamonds:  userEntity.Wallet.Diamonds,
+		Savings:   userEntity.Wallet.Savings,
+		CreatedAt: userEntity.CreatedAt.Format(time.RFC3339),
+	}
+
+	h.RespondWithJSON(w, r, response, http.StatusOK)
+}
+
+// UpdateUser UpdateUser
+// @Summary UpdateUser
+// @Description Update the current user's nickname
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param Authorization header string true "Bearer {token}" default "Bearer "
+// @Param request body dto.UpdateUserRequest true "Update user request"
+// @Success 200 {object} dto.UpdateUserResponse "Update user successfully"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request format"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "Internal server error"
+// @Router /users/me [put]
+func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	var req dto.UpdateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.log.WithError(err).Warnf("Invalid request format")
+		h.RespondWithError(w, r, h.log, err, ErrInvalidRequest, http.StatusBadRequest)
+		return
+	}
+
+	email := r.Context().Value(contextutil.UserEmailKey)
+	if email == nil {
+		h.log.Errorf("User email not found in context")
+		h.RespondWithError(w, r, h.log, nil, ErrEmailNotFound, http.StatusInternalServerError)
+		return
+	}
+
+	updatedUser, err := h.userService.UpdateUserName(r.Context(), email.(string), req.Name)
+	if err != nil {
+		h.log.WithError(err).Errorf("Failed to update user")
+		h.RespondWithError(w, r, h.log, err, ErrFailedToUpdateUser, http.StatusInternalServerError)
+		return
+	}
+
+	response := dto.UpdateUserResponse{
+		ID:        updatedUser.ID.Hex(),
+		Email:     updatedUser.Email,
+		Name:      updatedUser.Name,
+		Diamonds:  updatedUser.Wallet.Diamonds,
+		Savings:   updatedUser.Wallet.Savings,
+		UpdatedAt: updatedUser.UpdatedAt.Format(time.RFC3339),
+	}
+
+	h.RespondWithJSON(w, r, response, http.StatusOK)
+}
+
+// GetUser GetUser
+// @Summary GetUser
+// @Description Get the detailed information of the current user, with the option to return specific data fields
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param Authorization header string true "Bearer {token}" default "Bearer "
+// @Param scope query []string false "Fields to include (profile, wallet, character). If not specified, returns all" collectionFormat(multi)
+// @Success 200 {object} dto.GetUserResponse "Successfully retrieved user information"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /users/me [get]
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	email := r.Context().Value(contextutil.UserEmailKey)
 	if email == nil {
 		h.log.Errorf("User email not found in context")
-		http.Error(w, "User email not found in context", http.StatusInternalServerError)
+		h.RespondWithError(w, r, h.log, nil, ErrEmailNotFound, http.StatusInternalServerError)
 		return
 	}
 
-	logger := h.log.WithField("email", email)
+	scopes := r.URL.Query()["scope"]
+	logger := h.log.WithFields(map[string]any{
+		"email":  email,
+		"scopes": scopes,
+	})
 
-	userEntity, err := h.userService.GetOrCreateUser(r.Context(), email.(string), "")
+	userEntity, err := h.userService.GetUser(r.Context(), email.(string))
 	if err != nil {
-		logger.WithError(err).Errorf("Failed to get or create user")
-		http.Error(w, "Failed to retrieve user information", http.StatusInternalServerError)
+		logger.WithError(err).Errorf("Failed to get user")
+		h.RespondWithError(w, r, h.log, err, ErrFailedToGetUser, http.StatusInternalServerError)
 		return
 	}
 
-	_ = json.NewEncoder(w).Encode(userEntity)
+	response := buildUserResponse(userEntity, scopes)
+
+	h.RespondWithJSON(w, r, response, http.StatusOK)
+}
+
+func buildUserResponse(user *entities.User, scopes []string) dto.GetUserResponse {
+	response := dto.GetUserResponse{
+		ID:        user.ID.Hex(),
+		CreatedAt: user.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: user.UpdatedAt.Format(time.RFC3339),
+	}
+
+	if len(scopes) == 0 {
+		scopes = []string{"profile", "wallet", "character"}
+	}
+
+	for _, scope := range scopes {
+		switch scope {
+		case "profile":
+			response.Email = &user.Email
+			response.Name = &user.Name
+		case "wallet":
+			response.Wallet = &dto.WalletResponse{
+				Diamonds: user.Wallet.Diamonds,
+				Savings:  user.Wallet.Savings,
+			}
+		case "character":
+			response.Character = &dto.CharacterResponse{
+				ID:       user.Character.ID,
+				Name:     user.Character.Name,
+				ImageURL: user.Character.ImageURL,
+			}
+		}
+	}
+
+	return response
 }

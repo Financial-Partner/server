@@ -13,7 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	user "github.com/Financial-Partner/server/internal/domain/user"
+	entities "github.com/Financial-Partner/server/internal/entities"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -42,10 +42,10 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // Create mocks base method.
-func (m *MockRepository) Create(ctx context.Context, entity *user.UserEntity) (*user.UserEntity, error) {
+func (m *MockRepository) Create(ctx context.Context, entity *entities.User) (*entities.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Create", ctx, entity)
-	ret0, _ := ret[0].(*user.UserEntity)
+	ret0, _ := ret[0].(*entities.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -57,10 +57,10 @@ func (mr *MockRepositoryMockRecorder) Create(ctx, entity any) *gomock.Call {
 }
 
 // FindByEmail mocks base method.
-func (m *MockRepository) FindByEmail(ctx context.Context, email string) (*user.UserEntity, error) {
+func (m *MockRepository) FindByEmail(ctx context.Context, email string) (*entities.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByEmail", ctx, email)
-	ret0, _ := ret[0].(*user.UserEntity)
+	ret0, _ := ret[0].(*entities.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -72,7 +72,7 @@ func (mr *MockRepositoryMockRecorder) FindByEmail(ctx, email any) *gomock.Call {
 }
 
 // Update mocks base method.
-func (m *MockRepository) Update(ctx context.Context, entity *user.UserEntity) error {
+func (m *MockRepository) Update(ctx context.Context, entity *entities.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Update", ctx, entity)
 	ret0, _ := ret[0].(error)
@@ -124,10 +124,10 @@ func (mr *MockUserStoreMockRecorder) Delete(ctx, email any) *gomock.Call {
 }
 
 // Get mocks base method.
-func (m *MockUserStore) Get(ctx context.Context, email string) (*user.UserEntity, error) {
+func (m *MockUserStore) Get(ctx context.Context, email string) (*entities.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, email)
-	ret0, _ := ret[0].(*user.UserEntity)
+	ret0, _ := ret[0].(*entities.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -139,7 +139,7 @@ func (mr *MockUserStoreMockRecorder) Get(ctx, email any) *gomock.Call {
 }
 
 // Set mocks base method.
-func (m *MockUserStore) Set(ctx context.Context, entity *user.UserEntity) error {
+func (m *MockUserStore) Set(ctx context.Context, entity *entities.User) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Set", ctx, entity)
 	ret0, _ := ret[0].(error)

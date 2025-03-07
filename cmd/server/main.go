@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/Financial-Partner/server/internal/config"
+	authDomain "github.com/Financial-Partner/server/internal/domain/auth"
 	userDomain "github.com/Financial-Partner/server/internal/domain/user"
 	authInfra "github.com/Financial-Partner/server/internal/infrastructure/auth"
 	cacheInfra "github.com/Financial-Partner/server/internal/infrastructure/cache"
@@ -61,8 +62,9 @@ func main() {
 	userStore := redis.NewUserStore(cacheClient)
 
 	userService := userDomain.NewService(userRepo, userStore, log)
+	authService := authDomain.NewService()
 	authMiddleware := middleware.NewAuthMiddleware(authClient, log)
-	handlers := handler.NewHandler(userService, log)
+	handlers := handler.NewHandler(userService, authService, log)
 
 	router := mux.NewRouter()
 

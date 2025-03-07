@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Financial-Partner/server/internal/domain/user"
+	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/infrastructure/persistence/mongodb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,7 +17,7 @@ import (
 func TestMongoUserRepository(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 	testUserID := primitive.NewObjectID()
-	testUser := &user.UserEntity{
+	testUser := &entities.User{
 		ID:        testUserID,
 		Email:     "test@example.com",
 		CreatedAt: time.Now(),

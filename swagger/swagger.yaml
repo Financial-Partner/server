@@ -1,25 +1,197 @@
 basePath: /api
 definitions:
-  user.UserEntity:
+  dto.CharacterResponse:
     properties:
-      created_at:
-        type: string
-      email:
-        type: string
       id:
+        example: char_001
+        type: string
+      image_url:
+        example: https://example.com/characters/advisor.png
         type: string
       name:
+        example: Character Name
+        type: string
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      name:
+        example: New User Name
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  dto.CreateUserResponse:
+    properties:
+      created_at:
+        example: "2025-03-07T12:00:00Z"
+        type: string
+      diamonds:
+        example: 100
+        type: integer
+      email:
+        example: user@example.com
+        type: string
+      id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+      name:
+        example: User Name
+        type: string
+      savings:
+        example: 0
+        type: integer
+    type: object
+  dto.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  dto.GetUserResponse:
+    properties:
+      character:
+        $ref: '#/definitions/dto.CharacterResponse'
+      created_at:
+        example: "2025-03-07T12:00:00Z"
+        type: string
+      email:
+        example: user@example.com
+        type: string
+      id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+      name:
+        example: User Name
         type: string
       updated_at:
+        example: "2025-03-07T12:00:00Z"
         type: string
       wallet:
-        $ref: '#/definitions/user.WalletEntity'
+        $ref: '#/definitions/dto.WalletResponse'
     type: object
-  user.WalletEntity:
+  dto.LoginRequest:
+    properties:
+      firebase_token:
+        example: eyJhbGciOiJSUzI1NiIsImtpZCI6I...
+        type: string
+    required:
+    - firebase_token
+    type: object
+  dto.LoginResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+        type: string
+      expires_in:
+        example: 3600
+        type: integer
+      refresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+        type: string
+      token_type:
+        example: Bearer
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+    type: object
+  dto.LogoutRequest:
+    properties:
+      refresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+        type: string
+    required:
+    - refresh_token
+    type: object
+  dto.LogoutResponse:
+    properties:
+      message:
+        example: Successfully logged out
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  dto.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+        type: string
+    required:
+    - refresh_token
+    type: object
+  dto.RefreshTokenResponse:
+    properties:
+      access_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+        type: string
+      expires_in:
+        example: 3600
+        type: integer
+      token_type:
+        example: Bearer
+        type: string
+    type: object
+  dto.UpdateUserRequest:
+    properties:
+      name:
+        example: New User Name
+        type: string
+    required:
+    - name
+    type: object
+  dto.UpdateUserResponse:
     properties:
       diamonds:
+        example: 100
+        type: integer
+      email:
+        example: user@example.com
+        type: string
+      id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+      name:
+        example: New User Name
+        type: string
+      savings:
+        example: 5000
+        type: integer
+      updated_at:
+        example: "2025-03-07T12:00:00Z"
+        type: string
+    type: object
+  dto.UserResponse:
+    properties:
+      created_at:
+        example: "2025-03-07T12:00:00Z"
+        type: string
+      diamonds:
+        example: 100
+        type: integer
+      email:
+        example: user@example.com
+        type: string
+      id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+      name:
+        example: User Name
+        type: string
+    type: object
+  dto.WalletResponse:
+    properties:
+      diamonds:
+        example: 100
         type: integer
       savings:
+        example: 5000
         type: integer
     type: object
 info:
@@ -28,40 +200,223 @@ info:
   title: Financial Partner API
   version: "1.0"
 paths:
-  /users/me:
-    get:
+  /auth/login:
+    post:
       consumes:
       - application/json
-      description: Get user information by email from context. If user doesn't exist,
-        a new user will be created.
+      description: Login with Firebase, get Access Token and Refresh Token
+      parameters:
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successfully
+          schema:
+            $ref: '#/definitions/dto.LoginResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Authentication failed
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Login with Firebase
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Invalidate the current Refresh Token
+      parameters:
+      - description: Logout request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Logout successfully
+          schema:
+            $ref: '#/definitions/dto.LogoutResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: User logout
+      tags:
+      - auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Use Refresh Token to get a new Access Token
+      parameters:
+      - description: Token refresh request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token refresh successfully
+          schema:
+            $ref: '#/definitions/dto.RefreshTokenResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Invalid refresh token
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Refresh Access Token
+      tags:
+      - auth
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user when first login
       parameters:
       - description: Bearer {token}
         in: header
         name: Authorization
         required: true
         type: string
+      - description: Create user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Create user successfully
+          schema:
+            $ref: '#/definitions/dto.CreateUserResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: CreateUser
+      tags:
+      - users
+  /users/me:
+    get:
+      consumes:
+      - application/json
+      description: Get the detailed information of the current user, with the option
+        to return specific data fields
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - collectionFormat: multi
+        description: Fields to include (profile, wallet, character). If not specified,
+          returns all
+        in: query
+        items:
+          type: string
+        name: scope
+        type: array
       produces:
       - application/json
       responses:
         "200":
           description: Successfully retrieved user information
           schema:
-            $ref: '#/definitions/user.UserEntity'
-        "400":
-          description: Bad Request - Invalid token format
-          schema:
-            type: string
+            $ref: '#/definitions/dto.GetUserResponse'
         "401":
-          description: Unauthorized - Invalid or missing token
+          description: Unauthorized
           schema:
-            type: string
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal server error
           schema:
-            type: string
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
       - BearerAuth: []
-      summary: Get user information
+      summary: GetUser
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update the current user's nickname
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Update user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Update user successfully
+          schema:
+            $ref: '#/definitions/dto.UpdateUserResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: UpdateUser
       tags:
       - users
 swagger: "2.0"
