@@ -12,6 +12,18 @@ definitions:
         example: Character Name
         type: string
     type: object
+  dto.CreateGoalRequest:
+    properties:
+      period:
+        example: 30
+        type: integer
+      target_amount:
+        example: 10000
+        type: integer
+    required:
+    - period
+    - target_amount
+    type: object
   dto.CreateUserRequest:
     properties:
       email:
@@ -54,6 +66,11 @@ definitions:
       message:
         type: string
     type: object
+  dto.GetGoalResponse:
+    properties:
+      goal:
+        $ref: '#/definitions/dto.GoalResponse'
+    type: object
   dto.GetUserResponse:
     properties:
       character:
@@ -75,6 +92,68 @@ definitions:
         type: string
       wallet:
         $ref: '#/definitions/dto.WalletResponse'
+    type: object
+  dto.GoalResponse:
+    properties:
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      current_amount:
+        example: 5000
+        type: integer
+      period:
+        example: 30
+        type: integer
+      status:
+        example: Need to work harder
+        type: string
+      target_amount:
+        example: 10000
+        type: integer
+      updated_at:
+        example: "2023-06-01T00:00:00Z"
+        type: string
+    type: object
+  dto.GoalSuggestionRequest:
+    properties:
+      daily_expenses:
+        example: 1000
+        type: integer
+      daily_income:
+        example: 2000
+        type: integer
+      monthly_expenses:
+        example: 30000
+        type: integer
+      monthly_income:
+        example: 50000
+        type: integer
+      weekly_expenses:
+        example: 7000
+        type: integer
+      weekly_income:
+        example: 14000
+        type: integer
+    required:
+    - daily_expenses
+    - daily_income
+    - monthly_expenses
+    - monthly_income
+    - weekly_expenses
+    - weekly_income
+    type: object
+  dto.GoalSuggestionResponse:
+    properties:
+      message:
+        example: Based on your income and expense analysis, we recommend that you
+          can save 15,000 yuan per month.
+        type: string
+      period:
+        example: 30
+        type: integer
+      suggested_amount:
+        example: 15000
+        type: integer
     type: object
   dto.LoginRequest:
     properties:
@@ -298,6 +377,141 @@ paths:
       summary: Refresh Access Token
       tags:
       - auth
+  /goals:
+    get:
+      consumes:
+      - application/json
+      description: Get user's current saving goal and status
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetGoalResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get current saving goal
+      tags:
+      - goals
+    post:
+      consumes:
+      - application/json
+      description: Set user's saving goal amount and period
+      parameters:
+      - description: Create goal request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateGoalRequest'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GoalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create user's saving goal
+      tags:
+      - goals
+  /goals/suggestion:
+    post:
+      consumes:
+      - application/json
+      description: Calculate and return suggested saving goals based on user's input
+        expense data
+      parameters:
+      - description: Goal suggestion request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GoalSuggestionRequest'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GoalSuggestionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Calculate and return suggested saving goals based on user's input expense
+        data
+      tags:
+      - goals
+  /goals/suggestion/me:
+    get:
+      consumes:
+      - application/json
+      description: Calculate and return suggested saving goals based on user's expense
+        data
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GoalSuggestionResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Calculate and return suggested saving goals based on user's expense
+        data
+      tags:
+      - goals
   /users:
     post:
       consumes:

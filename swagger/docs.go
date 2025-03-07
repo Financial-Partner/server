@@ -165,6 +165,204 @@ const docTemplate = `{
                 }
             }
         },
+        "/goals": {
+            "get": {
+                "description": "Get user's current saving goal and status",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "goals"
+                ],
+                "summary": "Get current saving goal",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetGoalResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Set user's saving goal amount and period",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "goals"
+                ],
+                "summary": "Create user's saving goal",
+                "parameters": [
+                    {
+                        "description": "Create goal request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateGoalRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GoalResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/goals/suggestion": {
+            "post": {
+                "description": "Calculate and return suggested saving goals based on user's input expense data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "goals"
+                ],
+                "summary": "Calculate and return suggested saving goals based on user's input expense data",
+                "parameters": [
+                    {
+                        "description": "Goal suggestion request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.GoalSuggestionRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GoalSuggestionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/goals/suggestion/me": {
+            "get": {
+                "description": "Calculate and return suggested saving goals based on user's expense data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "goals"
+                ],
+                "summary": "Calculate and return suggested saving goals based on user's expense data",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GoalSuggestionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "post": {
                 "security": [
@@ -369,6 +567,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateGoalRequest": {
+            "type": "object",
+            "required": [
+                "period",
+                "target_amount"
+            ],
+            "properties": {
+                "period": {
+                    "type": "integer",
+                    "example": 30
+                },
+                "target_amount": {
+                    "type": "integer",
+                    "example": 10000
+                }
+            }
+        },
         "dto.CreateUserRequest": {
             "type": "object",
             "required": [
@@ -429,6 +644,14 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.GetGoalResponse": {
+            "type": "object",
+            "properties": {
+                "goal": {
+                    "$ref": "#/definitions/dto.GoalResponse"
+                }
+            }
+        },
         "dto.GetUserResponse": {
             "type": "object",
             "properties": {
@@ -457,6 +680,89 @@ const docTemplate = `{
                 },
                 "wallet": {
                     "$ref": "#/definitions/dto.WalletResponse"
+                }
+            }
+        },
+        "dto.GoalResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "current_amount": {
+                    "type": "integer",
+                    "example": 5000
+                },
+                "period": {
+                    "type": "integer",
+                    "example": 30
+                },
+                "status": {
+                    "type": "string",
+                    "example": "Need to work harder"
+                },
+                "target_amount": {
+                    "type": "integer",
+                    "example": 10000
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-06-01T00:00:00Z"
+                }
+            }
+        },
+        "dto.GoalSuggestionRequest": {
+            "type": "object",
+            "required": [
+                "daily_expenses",
+                "daily_income",
+                "monthly_expenses",
+                "monthly_income",
+                "weekly_expenses",
+                "weekly_income"
+            ],
+            "properties": {
+                "daily_expenses": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "daily_income": {
+                    "type": "integer",
+                    "example": 2000
+                },
+                "monthly_expenses": {
+                    "type": "integer",
+                    "example": 30000
+                },
+                "monthly_income": {
+                    "type": "integer",
+                    "example": 50000
+                },
+                "weekly_expenses": {
+                    "type": "integer",
+                    "example": 7000
+                },
+                "weekly_income": {
+                    "type": "integer",
+                    "example": 14000
+                }
+            }
+        },
+        "dto.GoalSuggestionResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Based on your income and expense analysis, we recommend that you can save 15,000 yuan per month."
+                },
+                "period": {
+                    "type": "integer",
+                    "example": 30
+                },
+                "suggested_amount": {
+                    "type": "integer",
+                    "example": 15000
                 }
             }
         },
