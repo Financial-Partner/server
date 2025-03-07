@@ -19,6 +19,9 @@
    # 安裝 air（用於本地開發熱重載，可選）
    go install github.com/cosmtrek/air@latest
 
+   # 安裝 mockgen（用於 generate mock files）
+   go install go.uber.org/mock/mockgen@latest
+
    # 執行設定腳本（安裝 linter 和設定 Git Hooks）
    ./scripts/setup.sh
    ```
