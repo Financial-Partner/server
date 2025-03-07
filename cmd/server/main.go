@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/Financial-Partner/server/internal/config"
+	authDomain "github.com/Financial-Partner/server/internal/domain/auth"
+	goalDomain "github.com/Financial-Partner/server/internal/domain/goal"
 	userDomain "github.com/Financial-Partner/server/internal/domain/user"
 	authInfra "github.com/Financial-Partner/server/internal/infrastructure/auth"
 	cacheInfra "github.com/Financial-Partner/server/internal/infrastructure/cache"
@@ -23,7 +25,6 @@ import (
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/middleware"
 	_ "github.com/Financial-Partner/server/swagger"
-	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 // @title Financial Partner API
@@ -61,8 +62,10 @@ func main() {
 	userStore := redis.NewUserStore(cacheClient)
 
 	userService := userDomain.NewService(userRepo, userStore, log)
+	authService := authDomain.NewService()
+	goalService := goalDomain.NewService()
 	authMiddleware := middleware.NewAuthMiddleware(authClient, log)
-	handlers := handler.NewHandler(userService, log)
+	handlers := handler.NewHandler(userService, authService, goalService, log)
 
 	router := mux.NewRouter()
 
@@ -71,17 +74,7 @@ func main() {
 		Host:   cfg.Server.Host + ":" + cfg.Server.Port,
 	}
 
-	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
-		httpSwagger.URL(apiBaseURL.String()+"/swagger/doc.json"),
-		httpSwagger.DeepLinking(true),
-		httpSwagger.DocExpansion("none"),
-		httpSwagger.DomID("swagger-ui"),
-	))
-
-	api := router.PathPrefix("/api").Subrouter()
-	api.Use(authMiddleware.Authenticate)
-
-	api.HandleFunc("/users/me", handlers.GetUser).Methods(http.MethodGet)
+	SetupRoutes(router, handlers, authMiddleware, apiBaseURL)
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Server.Port,

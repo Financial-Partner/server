@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/Financial-Partner/server/internal/domain/user"
+	"github.com/Financial-Partner/server/internal/entities"
 )
 
 type MongoClient interface {
@@ -25,8 +26,8 @@ func NewUserRepository(db MongoClient) user.Repository {
 	}
 }
 
-func (r *MongoUserRepository) FindByEmail(ctx context.Context, email string) (*user.UserEntity, error) {
-	var entity user.UserEntity
+func (r *MongoUserRepository) FindByEmail(ctx context.Context, email string) (*entities.User, error) {
+	var entity entities.User
 	err := r.collection.FindOne(ctx, bson.M{"email": email}).Decode(&entity)
 	if err != nil {
 		return nil, err
@@ -34,7 +35,7 @@ func (r *MongoUserRepository) FindByEmail(ctx context.Context, email string) (*u
 	return &entity, nil
 }
 
-func (r *MongoUserRepository) Create(ctx context.Context, entity *user.UserEntity) (*user.UserEntity, error) {
+func (r *MongoUserRepository) Create(ctx context.Context, entity *entities.User) (*entities.User, error) {
 	_, err := r.collection.InsertOne(ctx, entity)
 	if err != nil {
 		return nil, err
@@ -42,7 +43,7 @@ func (r *MongoUserRepository) Create(ctx context.Context, entity *user.UserEntit
 	return entity, nil
 }
 
-func (r *MongoUserRepository) Update(ctx context.Context, entity *user.UserEntity) error {
+func (r *MongoUserRepository) Update(ctx context.Context, entity *entities.User) error {
 	entity.UpdatedAt = time.Now()
 	_, err := r.collection.ReplaceOne(ctx, bson.M{"_id": entity.ID}, entity)
 	return err

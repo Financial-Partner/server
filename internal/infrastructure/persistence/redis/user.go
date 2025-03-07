@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Financial-Partner/server/internal/domain/user"
+	"github.com/Financial-Partner/server/internal/entities"
 )
 
 const (
@@ -21,8 +21,8 @@ func NewUserStore(cacheClient RedisClient) *UserStore {
 	return &UserStore{cacheClient: cacheClient}
 }
 
-func (s *UserStore) Get(ctx context.Context, email string) (*user.UserEntity, error) {
-	var user user.UserEntity
+func (s *UserStore) Get(ctx context.Context, email string) (*entities.User, error) {
+	var user entities.User
 	err := s.cacheClient.Get(ctx, fmt.Sprintf(userCacheKey, email), &user)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (s *UserStore) Get(ctx context.Context, email string) (*user.UserEntity, er
 	return &user, nil
 }
 
-func (s *UserStore) Set(ctx context.Context, user *user.UserEntity) error {
+func (s *UserStore) Set(ctx context.Context, user *entities.User) error {
 	return s.cacheClient.Set(ctx, fmt.Sprintf(userCacheKey, user.Email), user, userCacheTTL)
 }
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/Financial-Partner/server/internal/domain/user"
+	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/infrastructure/persistence/redis"
 	"github.com/Financial-Partner/server/internal/infrastructure/persistence/redis/mocks"
 	goredis "github.com/redis/go-redis/v9"
@@ -45,7 +45,7 @@ func TestUserStore(t *testing.T) {
 
 		mockRedisClient.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
 
-		err := userStore.Set(context.Background(), &user.UserEntity{
+		err := userStore.Set(context.Background(), &entities.User{
 			Email: "test@example.com",
 			Name:  "Test User",
 		})
