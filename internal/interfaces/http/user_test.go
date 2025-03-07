@@ -16,22 +16,14 @@ import (
 
 	"github.com/Financial-Partner/server/internal/contextutil"
 	"github.com/Financial-Partner/server/internal/entities"
-	"github.com/Financial-Partner/server/internal/infrastructure/logger"
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
-	"github.com/Financial-Partner/server/internal/interfaces/http/mocks"
 )
 
 func TestCreateUser(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
 
 	t.Run("Invalid request format", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		invalidBody := bytes.NewBufferString(`{invalid json`)
 		w := httptest.NewRecorder()
@@ -50,11 +42,7 @@ func TestCreateUser(t *testing.T) {
 	})
 
 	t.Run("Email mismatch", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		createReq := dto.CreateUserRequest{
 			Email: "user@example.com",
@@ -81,15 +69,11 @@ func TestCreateUser(t *testing.T) {
 	})
 
 	t.Run("Create user failed", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetOrCreateUser(gomock.Any(), "user@example.com", "Test User").
 			Return(nil, errors.New("failed to create user"))
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		createReq := dto.CreateUserRequest{
 			Email: "user@example.com",
@@ -117,9 +101,7 @@ func TestCreateUser(t *testing.T) {
 	})
 
 	t.Run("Create user successful", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
 		objectID := primitive.NewObjectID()
 		testUser := &entities.User{
@@ -134,11 +116,9 @@ func TestCreateUser(t *testing.T) {
 			UpdatedAt: time.Now(),
 		}
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetOrCreateUser(gomock.Any(), "user@example.com", "Test User").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		createReq := dto.CreateUserRequest{
 			Email: "user@example.com",
@@ -173,11 +153,7 @@ func TestUpdateUser(t *testing.T) {
 	defer ctrl.Finish()
 
 	t.Run("Invalid request format", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		invalidBody := bytes.NewBufferString(`{invalid json`)
 		w := httptest.NewRecorder()
@@ -196,11 +172,7 @@ func TestUpdateUser(t *testing.T) {
 	})
 
 	t.Run("Email not in context", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		updateReq := dto.UpdateUserRequest{
 			Name: "New Name",
@@ -223,15 +195,11 @@ func TestUpdateUser(t *testing.T) {
 	})
 
 	t.Run("Update user failed", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			UpdateUserName(gomock.Any(), "user@example.com", "New Name").
 			Return(nil, errors.New("update failed"))
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		updateReq := dto.UpdateUserRequest{
 			Name: "New Name",
@@ -258,9 +226,7 @@ func TestUpdateUser(t *testing.T) {
 	})
 
 	t.Run("Update user successful", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
 		objectID := primitive.NewObjectID()
 		testUser := &entities.User{
@@ -275,11 +241,9 @@ func TestUpdateUser(t *testing.T) {
 			UpdatedAt: time.Now(),
 		}
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			UpdateUserName(gomock.Any(), "user@example.com", "New Name").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		updateReq := dto.UpdateUserRequest{
 			Name: "New Name",
@@ -312,7 +276,6 @@ func TestGetUserWithScope(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	// 準備測試用户數據
 	objectID := primitive.NewObjectID()
 	testUser := &entities.User{
 		ID:    objectID,
@@ -332,11 +295,7 @@ func TestGetUserWithScope(t *testing.T) {
 	}
 
 	t.Run("User not found in context", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/users/me", nil)
@@ -354,15 +313,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user failed", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(nil, errors.New("user not found"))
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
@@ -384,15 +339,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user with no scope (all info)", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
@@ -423,15 +374,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user with profile scope only", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
@@ -457,15 +404,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user with wallet scope only", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
@@ -491,15 +434,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user with character scope only", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
@@ -526,15 +465,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user with multiple scopes", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
@@ -562,15 +497,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user with all scopes explicitly", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
@@ -601,15 +532,11 @@ func TestGetUserWithScope(t *testing.T) {
 	})
 
 	t.Run("Get user with unknown scope", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockUserService.EXPECT().
+		mockServices.UserService.EXPECT().
 			GetUser(gomock.Any(), "user@example.com").
 			Return(testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")

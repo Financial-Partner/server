@@ -10,10 +10,8 @@ import (
 	"time"
 
 	"github.com/Financial-Partner/server/internal/entities"
-	"github.com/Financial-Partner/server/internal/infrastructure/logger"
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
-	"github.com/Financial-Partner/server/internal/interfaces/http/mocks"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/mock/gomock"
@@ -24,11 +22,7 @@ func TestLogin(t *testing.T) {
 	defer ctrl.Finish()
 
 	t.Run("Invalid request format", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		invalidBody := bytes.NewBufferString(`{invalid json`)
 		w := httptest.NewRecorder()
@@ -47,15 +41,11 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("Authentication failed", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockAuthService.EXPECT().
+		mockServices.AuthService.EXPECT().
 			LoginWithFirebase(gomock.Any(), gomock.Any()).
 			Return("", "", 0, nil, errors.New("authentication failed"))
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		loginReq := dto.LoginRequest{
 			FirebaseToken: "valid_firebase_token",
@@ -78,9 +68,7 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("Login successful", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
 		objectID := primitive.NewObjectID()
 		testUser := &entities.User{
@@ -95,11 +83,9 @@ func TestLogin(t *testing.T) {
 			UpdatedAt: time.Now(),
 		}
 
-		mockAuthService.EXPECT().
+		mockServices.AuthService.EXPECT().
 			LoginWithFirebase(gomock.Any(), "valid_firebase_token").
 			Return("test_access_token", "test_refresh_token", 3600, testUser, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		loginReq := dto.LoginRequest{
 			FirebaseToken: "valid_firebase_token",
@@ -132,11 +118,7 @@ func TestRefreshToken(t *testing.T) {
 	defer ctrl.Finish()
 
 	t.Run("Invalid request format", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		invalidBody := bytes.NewBufferString(`{invalid json`)
 		w := httptest.NewRecorder()
@@ -155,15 +137,11 @@ func TestRefreshToken(t *testing.T) {
 	})
 
 	t.Run("Token refresh failed", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockAuthService.EXPECT().
+		mockServices.AuthService.EXPECT().
 			RefreshToken(gomock.Any(), gomock.Any()).
 			Return("", 0, errors.New("invalid refresh token"))
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		refreshReq := dto.RefreshTokenRequest{
 			RefreshToken: "invalid_refresh_token",
@@ -186,15 +164,11 @@ func TestRefreshToken(t *testing.T) {
 	})
 
 	t.Run("Token refresh successful", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockAuthService.EXPECT().
+		mockServices.AuthService.EXPECT().
 			RefreshToken(gomock.Any(), "valid_refresh_token").
 			Return("new_access_token", 3600, nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		refreshReq := dto.RefreshTokenRequest{
 			RefreshToken: "valid_refresh_token",
@@ -222,11 +196,7 @@ func TestLogout(t *testing.T) {
 	defer ctrl.Finish()
 
 	t.Run("Invalid request format", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
+		h, _ := newTestHandler(t)
 
 		invalidBody := bytes.NewBufferString(`{invalid json`)
 		w := httptest.NewRecorder()
@@ -245,15 +215,11 @@ func TestLogout(t *testing.T) {
 	})
 
 	t.Run("Logout failed", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockAuthService.EXPECT().
+		mockServices.AuthService.EXPECT().
 			Logout(gomock.Any(), gomock.Any()).
 			Return(errors.New("logout failed"))
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		logoutReq := dto.LogoutRequest{
 			RefreshToken: "refresh_token",
@@ -276,15 +242,11 @@ func TestLogout(t *testing.T) {
 	})
 
 	t.Run("Logout successful", func(t *testing.T) {
-		mockUserService := mocks.NewMockUserService(ctrl)
-		mockAuthService := mocks.NewMockAuthService(ctrl)
-		mockLogger := logger.NewNopLogger()
+		h, mockServices := newTestHandler(t)
 
-		mockAuthService.EXPECT().
+		mockServices.AuthService.EXPECT().
 			Logout(gomock.Any(), "refresh_token").
 			Return(nil)
-
-		h := handler.NewHandler(mockUserService, mockAuthService, mockLogger)
 
 		logoutReq := dto.LogoutRequest{
 			RefreshToken: "refresh_token",
