@@ -12,18 +12,18 @@ import (
 
 //go:generate mockgen -source=auth.go -destination=mocks/auth_mock.go -package=mocks
 
-type AuthClient interface {
-	VerifyToken(ctx context.Context, idToken string) (*auth.Token, error)
+type JWTValidator interface {
+	ValidateToken(tokenString string) (*auth.Claims, error)
 }
 
 type AuthMiddleware struct {
-	firebaseAuth AuthClient
+	jwtValidator JWTValidator
 	log          logger.Logger
 }
 
-func NewAuthMiddleware(fa AuthClient, log logger.Logger) *AuthMiddleware {
+func NewAuthMiddleware(jwt JWTValidator, log logger.Logger) *AuthMiddleware {
 	return &AuthMiddleware{
-		firebaseAuth: fa,
+		jwtValidator: jwt,
 		log:          log,
 	}
 }
@@ -37,23 +37,22 @@ func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
-		idToken := strings.TrimPrefix(authHeader, "Bearer ")
-		token, err := m.firebaseAuth.VerifyToken(r.Context(), idToken)
+		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		claims, err := m.jwtValidator.ValidateToken(tokenString)
 		if err != nil {
-			m.log.WithError(err).Warnf("Token verification failed")
+			m.log.WithError(err).Warnf("JWT token validation failed")
 			http.Error(w, "Invalid authorization token", http.StatusUnauthorized)
 			return
 		}
 
-		email, ok := token.Claims["email"].(string)
-		if !ok {
+		if claims.Email == "" {
 			m.log.Warnf("No email found in token claims")
 			http.Error(w, "Unable to retrieve user email", http.StatusUnauthorized)
 			return
 		}
 
-		m.log.WithField("email", email).Infof("User authenticated successfully")
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, email)
+		m.log.WithField("email", claims.Email).Infof("User authenticated successfully")
+		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, claims.Email)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

@@ -9,6 +9,8 @@ import (
 	"github.com/Financial-Partner/server/internal/contextutil"
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
+	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
+	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
 //go:generate mockgen -source=user.go -destination=mocks/user_mock.go -package=mocks
@@ -37,21 +39,21 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var req dto.CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("Invalid request format")
-		h.RespondWithError(w, r, h.log, err, ErrInvalidRequest, http.StatusBadRequest)
+		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	ctxEmail := r.Context().Value(contextutil.UserEmailKey)
 	if ctxEmail == nil || ctxEmail.(string) != req.Email {
 		h.log.Warnf("Email mismatch or not found in context")
-		h.RespondWithError(w, r, h.log, nil, ErrEmailMismatch, http.StatusUnauthorized)
+		responde.WithError(w, r, h.log, nil, httperror.ErrEmailMismatch, http.StatusUnauthorized)
 		return
 	}
 
 	userEntity, err := h.userService.GetOrCreateUser(r.Context(), req.Email, req.Name)
 	if err != nil {
 		h.log.WithError(err).Errorf("Failed to create user")
-		h.RespondWithError(w, r, h.log, err, ErrFailedToCreateUser, http.StatusInternalServerError)
+		responde.WithError(w, r, h.log, err, httperror.ErrFailedToCreateUser, http.StatusInternalServerError)
 		return
 	}
 
@@ -64,7 +66,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		CreatedAt: userEntity.CreatedAt.Format(time.RFC3339),
 	}
 
-	h.RespondWithJSON(w, r, response, http.StatusOK)
+	responde.WithJSON(w, r, response, http.StatusOK)
 }
 
 // UpdateUser UpdateUser
@@ -85,21 +87,21 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var req dto.UpdateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("Invalid request format")
-		h.RespondWithError(w, r, h.log, err, ErrInvalidRequest, http.StatusBadRequest)
+		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	email := r.Context().Value(contextutil.UserEmailKey)
 	if email == nil {
 		h.log.Errorf("User email not found in context")
-		h.RespondWithError(w, r, h.log, nil, ErrEmailNotFound, http.StatusInternalServerError)
+		responde.WithError(w, r, h.log, nil, httperror.ErrEmailNotFound, http.StatusInternalServerError)
 		return
 	}
 
 	updatedUser, err := h.userService.UpdateUserName(r.Context(), email.(string), req.Name)
 	if err != nil {
 		h.log.WithError(err).Errorf("Failed to update user")
-		h.RespondWithError(w, r, h.log, err, ErrFailedToUpdateUser, http.StatusInternalServerError)
+		responde.WithError(w, r, h.log, err, httperror.ErrFailedToUpdateUser, http.StatusInternalServerError)
 		return
 	}
 
@@ -112,7 +114,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt: updatedUser.UpdatedAt.Format(time.RFC3339),
 	}
 
-	h.RespondWithJSON(w, r, response, http.StatusOK)
+	responde.WithJSON(w, r, response, http.StatusOK)
 }
 
 // GetUser GetUser
@@ -132,7 +134,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	email := r.Context().Value(contextutil.UserEmailKey)
 	if email == nil {
 		h.log.Errorf("User email not found in context")
-		h.RespondWithError(w, r, h.log, nil, ErrEmailNotFound, http.StatusInternalServerError)
+		responde.WithError(w, r, h.log, nil, httperror.ErrEmailNotFound, http.StatusInternalServerError)
 		return
 	}
 
@@ -145,13 +147,13 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userEntity, err := h.userService.GetUser(r.Context(), email.(string))
 	if err != nil {
 		logger.WithError(err).Errorf("Failed to get user")
-		h.RespondWithError(w, r, h.log, err, ErrFailedToGetUser, http.StatusInternalServerError)
+		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetUser, http.StatusInternalServerError)
 		return
 	}
 
 	response := buildUserResponse(userEntity, scopes)
 
-	h.RespondWithJSON(w, r, response, http.StatusOK)
+	responde.WithJSON(w, r, response, http.StatusOK)
 }
 
 func buildUserResponse(user *entities.User, scopes []string) dto.GetUserResponse {

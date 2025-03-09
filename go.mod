@@ -5,6 +5,7 @@ go 1.24
 require (
 	firebase.google.com/go/v4 v4.13.0
 	github.com/go-redis/redismock/v9 v9.2.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/gorilla/mux v1.8.1
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/sirupsen/logrus v1.9.3

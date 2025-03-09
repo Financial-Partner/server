@@ -61,8 +61,6 @@ definitions:
     properties:
       code:
         type: integer
-      error:
-        type: string
       message:
         type: string
     type: object
@@ -213,6 +211,9 @@ definitions:
       expires_in:
         example: 3600
         type: integer
+      refresh_token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6...
+        type: string
       token_type:
         example: Bearer
         type: string

@@ -8,19 +8,17 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - CONFIG_PATH=/app/config/config.local.yaml
-      - MONGODB_USER=root
-      - MONGODB_PASSWORD=password
-      - MONGODB_HOST=mongodb
-      - MONGODB_PORT=27017
-      - MONGODB_DATABASE=gamedb
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=
-      - REDIS_DB=0
-      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - PARTNER_SERVER_MONGODB_URI=mongodb://root:password@mongodb:27017
+      - PARTNER_SERVER_MONGODB_DATABASE=gamedb
+      - PARTNER_SERVER_REDIS_HOST=redis:6379
+      - PARTNER_SERVER_REDIS_PASSWORD=
+      - PARTNER_SERVER_REDIS_DB=0
+      - PARTNER_SERVER_FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - PARTNER_SERVER_JWT_SECRET_KEY=jwt-secret-key
+      - PARTNER_SERVER_JWT_ACCESS_EXPIRY=1h
+      - PARTNER_SERVER_JWT_REFRESH_EXPIRY=24h
     volumes:
-      - ./config/config.local.yaml:/app/config/config.local.yaml:ro
+      - ./config/config.example.yaml:/app/config/config.yaml:ro
       - ./config/firebase_credential.json:/app/config/firebase_credential.json:ro
     depends_on:
       - redis

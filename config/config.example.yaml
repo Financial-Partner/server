@@ -13,4 +13,9 @@ redis:
 
 firebase:
   project_id: "your-project-id"
-  credential_file: "config/firebase_credential.json" 
+  credential_file: "config/firebase_credential.json"
+
+jwt:
+  secret_key: "your-secret-key"
+  access_expiry: 1h
+  refresh_expiry: 24h

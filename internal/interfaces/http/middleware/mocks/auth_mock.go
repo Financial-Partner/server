@@ -10,48 +10,47 @@
 package mocks
 
 import (
-	context "context"
 	reflect "reflect"
 
 	auth "github.com/Financial-Partner/server/internal/infrastructure/auth"
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockAuthClient is a mock of AuthClient interface.
-type MockAuthClient struct {
+// MockJWTValidator is a mock of JWTValidator interface.
+type MockJWTValidator struct {
 	ctrl     *gomock.Controller
-	recorder *MockAuthClientMockRecorder
+	recorder *MockJWTValidatorMockRecorder
 	isgomock struct{}
 }
 
-// MockAuthClientMockRecorder is the mock recorder for MockAuthClient.
-type MockAuthClientMockRecorder struct {
-	mock *MockAuthClient
+// MockJWTValidatorMockRecorder is the mock recorder for MockJWTValidator.
+type MockJWTValidatorMockRecorder struct {
+	mock *MockJWTValidator
 }
 
-// NewMockAuthClient creates a new mock instance.
-func NewMockAuthClient(ctrl *gomock.Controller) *MockAuthClient {
-	mock := &MockAuthClient{ctrl: ctrl}
-	mock.recorder = &MockAuthClientMockRecorder{mock}
+// NewMockJWTValidator creates a new mock instance.
+func NewMockJWTValidator(ctrl *gomock.Controller) *MockJWTValidator {
+	mock := &MockJWTValidator{ctrl: ctrl}
+	mock.recorder = &MockJWTValidatorMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockAuthClient) EXPECT() *MockAuthClientMockRecorder {
+func (m *MockJWTValidator) EXPECT() *MockJWTValidatorMockRecorder {
 	return m.recorder
 }
 
-// VerifyToken mocks base method.
-func (m *MockAuthClient) VerifyToken(ctx context.Context, idToken string) (*auth.Token, error) {
+// ValidateToken mocks base method.
+func (m *MockJWTValidator) ValidateToken(tokenString string) (*auth.Claims, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "VerifyToken", ctx, idToken)
-	ret0, _ := ret[0].(*auth.Token)
+	ret := m.ctrl.Call(m, "ValidateToken", tokenString)
+	ret0, _ := ret[0].(*auth.Claims)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// VerifyToken indicates an expected call of VerifyToken.
-func (mr *MockAuthClientMockRecorder) VerifyToken(ctx, idToken any) *gomock.Call {
+// ValidateToken indicates an expected call of ValidateToken.
+func (mr *MockJWTValidatorMockRecorder) ValidateToken(tokenString any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "VerifyToken", reflect.TypeOf((*MockAuthClient)(nil).VerifyToken), ctx, idToken)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateToken", reflect.TypeOf((*MockJWTValidator)(nil).ValidateToken), tokenString)
 }

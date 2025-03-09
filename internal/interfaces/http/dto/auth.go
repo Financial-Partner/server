@@ -25,9 +25,10 @@ type RefreshTokenRequest struct {
 }
 
 type RefreshTokenResponse struct {
-	AccessToken string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6..."`
-	ExpiresIn   int    `json:"expires_in" example:"3600"`
-	TokenType   string `json:"token_type" example:"Bearer"`
+	AccessToken  string `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6..."`
+	RefreshToken string `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6..."`
+	ExpiresIn    int    `json:"expires_in" example:"3600"`
+	TokenType    string `json:"token_type" example:"Bearer"`
 }
 
 type LogoutRequest struct {
