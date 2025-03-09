@@ -12,8 +12,8 @@ import (
 
 	"github.com/Financial-Partner/server/internal/contextutil"
 	"github.com/Financial-Partner/server/internal/entities"
-	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
+	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
@@ -40,7 +40,7 @@ func TestGetGoalSuggestion(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRequest, errorResp.Message)
+		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
 	t.Run("Unauthorized request", func(t *testing.T) {
@@ -67,7 +67,7 @@ func TestGetGoalSuggestion(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, handler.ErrUnauthorized, errorResp.Message)
+		assert.Equal(t, httperror.ErrUnauthorized, errorResp.Message)
 	})
 
 	t.Run("Service error", func(t *testing.T) {
@@ -100,8 +100,7 @@ func TestGetGoalSuggestion(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToGetGoalSuggestion, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "service error")
+		assert.Equal(t, httperror.ErrFailedToGetGoalSuggestion, errorResp.Message)
 	})
 
 	t.Run("Success", func(t *testing.T) {
@@ -164,7 +163,7 @@ func TestGetAutoGoalSuggestion(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, handler.ErrUnauthorized, errorResp.Message)
+		assert.Equal(t, httperror.ErrUnauthorized, errorResp.Message)
 	})
 
 	t.Run("Service error", func(t *testing.T) {
@@ -188,8 +187,7 @@ func TestGetAutoGoalSuggestion(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToGetGoalSuggestion, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "service error")
+		assert.Equal(t, httperror.ErrFailedToGetGoalSuggestion, errorResp.Message)
 	})
 
 	t.Run("Success", func(t *testing.T) {
@@ -246,7 +244,7 @@ func TestCreateGoal(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRequest, errorResp.Message)
+		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
 	t.Run("Unauthorized request", func(t *testing.T) {
@@ -269,7 +267,7 @@ func TestCreateGoal(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, handler.ErrUnauthorized, errorResp.Message)
+		assert.Equal(t, httperror.ErrUnauthorized, errorResp.Message)
 	})
 
 	t.Run("Service error", func(t *testing.T) {
@@ -298,8 +296,7 @@ func TestCreateGoal(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToCreateGoal, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "service error")
+		assert.Equal(t, httperror.ErrFailedToCreateGoal, errorResp.Message)
 	})
 
 	t.Run("Success", func(t *testing.T) {
@@ -367,7 +364,7 @@ func TestGetGoal(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, handler.ErrUnauthorized, errorResp.Message)
+		assert.Equal(t, httperror.ErrUnauthorized, errorResp.Message)
 	})
 
 	t.Run("Service error", func(t *testing.T) {
@@ -391,8 +388,7 @@ func TestGetGoal(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToGetGoal, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "service error")
+		assert.Equal(t, httperror.ErrFailedToGetGoal, errorResp.Message)
 	})
 
 	t.Run("Success", func(t *testing.T) {

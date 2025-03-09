@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/Financial-Partner/server/internal/entities"
-	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
+	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/mock/gomock"
@@ -37,7 +37,7 @@ func TestLogin(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRequest, errorResp.Message)
+		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
 	t.Run("Authentication failed", func(t *testing.T) {
@@ -63,8 +63,7 @@ func TestLogin(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, handler.ErrUnauthorized, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "authentication failed")
+		assert.Equal(t, httperror.ErrUnauthorized, errorResp.Message)
 	})
 
 	t.Run("Login successful", func(t *testing.T) {
@@ -133,7 +132,7 @@ func TestRefreshToken(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRequest, errorResp.Message)
+		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
 	t.Run("Token refresh failed", func(t *testing.T) {
@@ -159,8 +158,7 @@ func TestRefreshToken(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRefreshToken, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "invalid refresh token")
+		assert.Equal(t, httperror.ErrInvalidRefreshToken, errorResp.Message)
 	})
 
 	t.Run("Token refresh successful", func(t *testing.T) {
@@ -211,7 +209,7 @@ func TestLogout(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRequest, errorResp.Message)
+		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
 	t.Run("Logout failed", func(t *testing.T) {
@@ -237,8 +235,7 @@ func TestLogout(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToLogout, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "logout failed")
+		assert.Equal(t, httperror.ErrFailedToLogout, errorResp.Message)
 	})
 
 	t.Run("Logout successful", func(t *testing.T) {

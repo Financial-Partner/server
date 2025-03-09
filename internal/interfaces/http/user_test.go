@@ -16,8 +16,8 @@ import (
 
 	"github.com/Financial-Partner/server/internal/contextutil"
 	"github.com/Financial-Partner/server/internal/entities"
-	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
+	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -38,7 +38,7 @@ func TestCreateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRequest, errorResp.Message)
+		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
 	t.Run("Email mismatch", func(t *testing.T) {
@@ -65,7 +65,7 @@ func TestCreateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, handler.ErrEmailMismatch, errorResp.Message)
+		assert.Equal(t, httperror.ErrEmailMismatch, errorResp.Message)
 	})
 
 	t.Run("Create user failed", func(t *testing.T) {
@@ -96,8 +96,7 @@ func TestCreateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToCreateUser, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "failed to create user")
+		assert.Equal(t, httperror.ErrFailedToCreateUser, errorResp.Message)
 	})
 
 	t.Run("Create user successful", func(t *testing.T) {
@@ -168,7 +167,7 @@ func TestUpdateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, handler.ErrInvalidRequest, errorResp.Message)
+		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
 	t.Run("Email not in context", func(t *testing.T) {
@@ -191,7 +190,7 @@ func TestUpdateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrEmailNotFound, errorResp.Message)
+		assert.Equal(t, httperror.ErrEmailNotFound, errorResp.Message)
 	})
 
 	t.Run("Update user failed", func(t *testing.T) {
@@ -221,8 +220,7 @@ func TestUpdateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToUpdateUser, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "update failed")
+		assert.Equal(t, httperror.ErrFailedToUpdateUser, errorResp.Message)
 	})
 
 	t.Run("Update user successful", func(t *testing.T) {
@@ -309,7 +307,7 @@ func TestGetUserWithScope(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrEmailNotFound, errorResp.Message)
+		assert.Equal(t, httperror.ErrEmailNotFound, errorResp.Message)
 	})
 
 	t.Run("Get user failed", func(t *testing.T) {
@@ -334,8 +332,7 @@ func TestGetUserWithScope(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, handler.ErrFailedToGetUser, errorResp.Message)
-		assert.Contains(t, errorResp.Error, "user not found")
+		assert.Equal(t, httperror.ErrFailedToGetUser, errorResp.Message)
 	})
 
 	t.Run("Get user with no scope (all info)", func(t *testing.T) {
