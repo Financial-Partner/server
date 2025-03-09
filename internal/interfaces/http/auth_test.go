@@ -140,7 +140,7 @@ func TestRefreshToken(t *testing.T) {
 
 		mockServices.AuthService.EXPECT().
 			RefreshToken(gomock.Any(), gomock.Any()).
-			Return("", 0, errors.New("invalid refresh token"))
+			Return("", "", 0, errors.New("invalid refresh token"))
 
 		refreshReq := dto.RefreshTokenRequest{
 			RefreshToken: "invalid_refresh_token",
@@ -166,7 +166,7 @@ func TestRefreshToken(t *testing.T) {
 
 		mockServices.AuthService.EXPECT().
 			RefreshToken(gomock.Any(), "valid_refresh_token").
-			Return("new_access_token", 3600, nil)
+			Return("new_access_token", "new_refresh_token", 3600, nil)
 
 		refreshReq := dto.RefreshTokenRequest{
 			RefreshToken: "valid_refresh_token",
@@ -184,6 +184,7 @@ func TestRefreshToken(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&response)
 		assert.NoError(t, err)
 		assert.Equal(t, "new_access_token", response.AccessToken)
+		assert.Equal(t, "new_refresh_token", response.RefreshToken)
 		assert.Equal(t, 3600, response.ExpiresIn)
 		assert.Equal(t, "Bearer", response.TokenType)
 	})
