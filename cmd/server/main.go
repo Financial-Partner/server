@@ -62,7 +62,23 @@ func main() {
 	userStore := redis.NewUserStore(cacheClient)
 
 	userService := userDomain.NewService(userRepo, userStore, log)
-	authService := authDomain.NewService()
+
+	jwtManager := authInfra.NewJWTManager(
+		cfg.JWT.SecretKey,
+		cfg.JWT.AccessExpiry,
+		cfg.JWT.RefreshExpiry,
+	)
+
+	tokenStore := redis.NewTokenStore(cacheClient)
+
+	authService := authDomain.NewService(
+		cfg,
+		authClient,
+		jwtManager,
+		tokenStore,
+		userService,
+	)
+
 	goalService := goalDomain.NewService()
 	authMiddleware := middleware.NewAuthMiddleware(authClient, log)
 	handlers := handler.NewHandler(userService, authService, goalService, log)
