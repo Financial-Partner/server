@@ -80,7 +80,7 @@ func main() {
 	)
 
 	goalService := goalDomain.NewService()
-	authMiddleware := middleware.NewAuthMiddleware(authClient, log)
+	authMiddleware := middleware.NewAuthMiddleware(jwtManager, log)
 	handlers := handler.NewHandler(userService, authService, goalService, log)
 
 	router := mux.NewRouter()
