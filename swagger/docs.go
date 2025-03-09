@@ -636,9 +636,6 @@ const docTemplate = `{
                 "code": {
                     "type": "integer"
                 },
-                "error": {
-                    "type": "string"
-                },
                 "message": {
                     "type": "string"
                 }
@@ -849,6 +846,10 @@ const docTemplate = `{
                 "expires_in": {
                     "type": "integer",
                     "example": 3600
+                },
+                "refresh_token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
                 },
                 "token_type": {
                     "type": "string",

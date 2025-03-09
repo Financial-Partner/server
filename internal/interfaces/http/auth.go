@@ -16,7 +16,7 @@ import (
 
 type AuthService interface {
 	LoginWithFirebase(ctx context.Context, firebaseToken string) (accessToken, refreshToken string, expiresIn int, userInfo *entities.User, err error)
-	RefreshToken(ctx context.Context, refreshToken string) (newAccessToken string, expiresIn int, err error)
+	RefreshToken(ctx context.Context, refreshToken string) (newAccessToken, newRefreshToken string, expiresIn int, err error)
 	Logout(ctx context.Context, refreshToken string) error
 }
 
@@ -84,7 +84,7 @@ func (h *Handler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newAccessToken, expiresIn, err := h.authService.RefreshToken(r.Context(), req.RefreshToken)
+	newAccessToken, newRefreshToken, expiresIn, err := h.authService.RefreshToken(r.Context(), req.RefreshToken)
 	if err != nil {
 		h.log.WithError(err).Errorf("Token refresh failed")
 		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRefreshToken, http.StatusUnauthorized)
@@ -92,9 +92,10 @@ func (h *Handler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := dto.RefreshTokenResponse{
-		AccessToken: newAccessToken,
-		ExpiresIn:   expiresIn,
-		TokenType:   "Bearer",
+		AccessToken:  newAccessToken,
+		RefreshToken: newRefreshToken,
+		ExpiresIn:    expiresIn,
+		TokenType:    "Bearer",
 	}
 
 	responde.WithJSON(w, r, response, http.StatusOK)

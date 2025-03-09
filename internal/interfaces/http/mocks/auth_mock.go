@@ -74,13 +74,14 @@ func (mr *MockAuthServiceMockRecorder) Logout(ctx, refreshToken any) *gomock.Cal
 }
 
 // RefreshToken mocks base method.
-func (m *MockAuthService) RefreshToken(ctx context.Context, refreshToken string) (string, int, error) {
+func (m *MockAuthService) RefreshToken(ctx context.Context, refreshToken string) (string, string, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RefreshToken", ctx, refreshToken)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(int)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(int)
+	ret3, _ := ret[3].(error)
+	return ret0, ret1, ret2, ret3
 }
 
 // RefreshToken indicates an expected call of RefreshToken.
