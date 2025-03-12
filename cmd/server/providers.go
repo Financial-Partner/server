@@ -7,9 +7,6 @@ import (
 	"time"
 
 	"github.com/Financial-Partner/server/internal/config"
-	authDomain "github.com/Financial-Partner/server/internal/domain/auth"
-	goalDomain "github.com/Financial-Partner/server/internal/domain/goal"
-	userDomain "github.com/Financial-Partner/server/internal/domain/user"
 	authInfra "github.com/Financial-Partner/server/internal/infrastructure/auth"
 	cacheInfra "github.com/Financial-Partner/server/internal/infrastructure/cache"
 	dbInfra "github.com/Financial-Partner/server/internal/infrastructure/database"
@@ -18,6 +15,10 @@ import (
 	perRedis "github.com/Financial-Partner/server/internal/infrastructure/persistence/redis"
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/middleware"
+	auth_usecase "github.com/Financial-Partner/server/internal/module/auth/usecase"
+	goal_usecase "github.com/Financial-Partner/server/internal/module/goal/usecase"
+	user_repository "github.com/Financial-Partner/server/internal/module/user/repository"
+	user_usecase "github.com/Financial-Partner/server/internal/module/user/usecase"
 	"github.com/gorilla/mux"
 )
 
@@ -41,7 +42,7 @@ func ProvideAuthClient(cfg *config.Config) (*authInfra.Client, error) {
 	return authInfra.NewClient(context.Background(), cfg)
 }
 
-func ProvideUserRepository(db *dbInfra.Client) userDomain.Repository {
+func ProvideUserRepository(db *dbInfra.Client) user_repository.Repository {
 	return perMongo.NewUserRepository(db)
 }
 
@@ -49,8 +50,8 @@ func ProvideUserStore(cache *cacheInfra.Client) *perRedis.UserStore {
 	return perRedis.NewUserStore(cache)
 }
 
-func ProvideUserService(repo userDomain.Repository, store *perRedis.UserStore, log loggerInfra.Logger) *userDomain.Service {
-	return userDomain.NewService(repo, store, log)
+func ProvideUserService(repo user_repository.Repository, store *perRedis.UserStore, log loggerInfra.Logger) *user_usecase.Service {
+	return user_usecase.NewService(repo, store, log)
 }
 
 func ProvideJWTManager(cfg *config.Config) *authInfra.JWTManager {
@@ -66,19 +67,19 @@ func ProvideAuthService(
 	authClient *authInfra.Client,
 	jwtManager *authInfra.JWTManager,
 	tokenStore *perRedis.TokenStore,
-	userService *userDomain.Service,
-) *authDomain.Service {
-	return authDomain.NewService(cfg, authClient, jwtManager, tokenStore, userService)
+	userService *user_usecase.Service,
+) *auth_usecase.Service {
+	return auth_usecase.NewService(cfg, authClient, jwtManager, tokenStore, userService)
 }
 
-func ProvideGoalService() *goalDomain.Service {
-	return goalDomain.NewService()
+func ProvideGoalService() *goal_usecase.Service {
+	return goal_usecase.NewService()
 }
 
 func ProvideHandler(
-	userService *userDomain.Service,
-	authService *authDomain.Service,
-	goalService *goalDomain.Service,
+	userService *user_usecase.Service,
+	authService *auth_usecase.Service,
+	goalService *goal_usecase.Service,
 	log loggerInfra.Logger,
 ) *handler.Handler {
 	return handler.NewHandler(userService, authService, goalService, log)

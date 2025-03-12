@@ -1,4 +1,4 @@
-package auth
+package auth_usecase
 
 import (
 	"context"
@@ -7,22 +7,24 @@ import (
 
 	"github.com/Financial-Partner/server/internal/config"
 	"github.com/Financial-Partner/server/internal/entities"
+	auth_domain "github.com/Financial-Partner/server/internal/module/auth/domain"
+	user_domain "github.com/Financial-Partner/server/internal/module/user/domain"
 )
 
 type Service struct {
 	cfg          *config.Config
-	firebaseAuth FirebaseAuth
-	jwtManager   JWTManager
-	tokenStore   TokenStore
-	userService  UserService
+	firebaseAuth auth_domain.FirebaseAuth
+	jwtManager   auth_domain.JWTManager
+	tokenStore   auth_domain.TokenStore
+	userService  user_domain.UserService
 }
 
 func NewService(
 	cfg *config.Config,
-	firebaseAuth FirebaseAuth,
-	jwtManager JWTManager,
-	tokenStore TokenStore,
-	userService UserService,
+	firebaseAuth auth_domain.FirebaseAuth,
+	jwtManager auth_domain.JWTManager,
+	tokenStore auth_domain.TokenStore,
+	userService user_domain.UserService,
 ) *Service {
 	return &Service{
 		cfg:          cfg,
