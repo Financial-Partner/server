@@ -1,4 +1,4 @@
-package auth_test
+package auth_usecase_test
 
 import (
 	"context"
@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"github.com/Financial-Partner/server/internal/config"
-	"github.com/Financial-Partner/server/internal/domain/auth"
-	"github.com/Financial-Partner/server/internal/domain/auth/mocks"
 	"github.com/Financial-Partner/server/internal/entities"
 	infraAuth "github.com/Financial-Partner/server/internal/infrastructure/auth"
+	auth_domain "github.com/Financial-Partner/server/internal/module/auth/domain"
+	auth_usecase "github.com/Financial-Partner/server/internal/module/auth/usecase"
+	user_domain "github.com/Financial-Partner/server/internal/module/user/domain"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
@@ -19,12 +20,12 @@ func TestRefreshToken(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockJWTManager := mocks.NewMockJWTManager(ctrl)
-	mockTokenStore := mocks.NewMockTokenStore(ctrl)
-	mockUserService := mocks.NewMockUserService(ctrl)
+	mockJWTManager := auth_domain.NewMockJWTManager(ctrl)
+	mockTokenStore := auth_domain.NewMockTokenStore(ctrl)
+	mockUserService := user_domain.NewMockUserService(ctrl)
 
 	cfg := &config.Config{}
-	service := auth.NewService(cfg, nil, mockJWTManager, mockTokenStore, mockUserService)
+	service := auth_usecase.NewService(cfg, nil, mockJWTManager, mockTokenStore, mockUserService)
 
 	t.Run("Success case", func(t *testing.T) {
 		claims := &infraAuth.Claims{Email: "test@example.com"}
@@ -240,13 +241,13 @@ func TestLoginWithFirebase(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockFirebaseAuth := mocks.NewMockFirebaseAuth(ctrl)
-	mockJWTManager := mocks.NewMockJWTManager(ctrl)
-	mockTokenStore := mocks.NewMockTokenStore(ctrl)
-	mockUserService := mocks.NewMockUserService(ctrl)
+	mockFirebaseAuth := auth_domain.NewMockFirebaseAuth(ctrl)
+	mockJWTManager := auth_domain.NewMockJWTManager(ctrl)
+	mockTokenStore := auth_domain.NewMockTokenStore(ctrl)
+	mockUserService := user_domain.NewMockUserService(ctrl)
 
 	cfg := &config.Config{}
-	service := auth.NewService(cfg, mockFirebaseAuth, mockJWTManager, mockTokenStore, mockUserService)
+	service := auth_usecase.NewService(cfg, mockFirebaseAuth, mockJWTManager, mockTokenStore, mockUserService)
 
 	t.Run("Success case", func(t *testing.T) {
 		token := &infraAuth.Token{
@@ -515,12 +516,12 @@ func TestLogout(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockJWTManager := mocks.NewMockJWTManager(ctrl)
-	mockTokenStore := mocks.NewMockTokenStore(ctrl)
-	mockUserService := mocks.NewMockUserService(ctrl)
+	mockJWTManager := auth_domain.NewMockJWTManager(ctrl)
+	mockTokenStore := auth_domain.NewMockTokenStore(ctrl)
+	mockUserService := user_domain.NewMockUserService(ctrl)
 
 	cfg := &config.Config{}
-	service := auth.NewService(cfg, nil, mockJWTManager, mockTokenStore, mockUserService)
+	service := auth_usecase.NewService(cfg, nil, mockJWTManager, mockTokenStore, mockUserService)
 
 	t.Run("Success case", func(t *testing.T) {
 		mockTokenStore.EXPECT().

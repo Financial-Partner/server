@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/Financial-Partner/server/internal/domain/user"
 	"github.com/Financial-Partner/server/internal/entities"
+	user_repository "github.com/Financial-Partner/server/internal/module/user/repository"
 )
 
 type MongoClient interface {
@@ -20,7 +20,7 @@ type MongoUserRepository struct {
 	collection *mongo.Collection
 }
 
-func NewUserRepository(db MongoClient) user.Repository {
+func NewUserRepository(db MongoClient) user_repository.Repository {
 	return &MongoUserRepository{
 		collection: db.Collection("users"),
 	}

@@ -1,14 +1,14 @@
-package user_test
+package user_usecase_test
 
 import (
 	"context"
 	"errors"
 	"testing"
 
-	"github.com/Financial-Partner/server/internal/domain/user"
-	"github.com/Financial-Partner/server/internal/domain/user/mocks"
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/infrastructure/logger"
+	user_repository "github.com/Financial-Partner/server/internal/module/user/repository"
+	user_usecase "github.com/Financial-Partner/server/internal/module/user/usecase"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
@@ -19,11 +19,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "test@example.com"
 
@@ -43,11 +43,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "test@example.com"
 
@@ -70,11 +70,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "test@example.com"
 
@@ -97,11 +97,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "test@example.com"
 
@@ -120,11 +120,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "test@example.com"
 		name := "Existing User"
@@ -145,11 +145,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "new@example.com"
 		name := "New User"
@@ -181,11 +181,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "new@example.com"
 		name := "New User"
@@ -217,11 +217,11 @@ func TestService(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockRepo := mocks.NewMockRepository(ctrl)
-		mockStore := mocks.NewMockUserStore(ctrl)
+		mockRepo := user_repository.NewMockRepository(ctrl)
+		mockStore := user_repository.NewMockUserStore(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		svc := user.NewService(mockRepo, mockStore, mockLogger)
+		svc := user_usecase.NewService(mockRepo, mockStore, mockLogger)
 		ctx := context.Background()
 		email := "fail@example.com"
 		name := "Fail User"

@@ -1,24 +1,18 @@
-package auth
+package auth_domain
 
 import (
 	"context"
 	"time"
 
-	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/infrastructure/auth"
 )
 
-//go:generate mockgen -source=interfaces.go -destination=mocks/interfaces_mock.go -package=mocks
+//go:generate mockgen -source=interfaces.go -destination=interfaces_mock.go -package=auth_domain
 
 type TokenStore interface {
 	SaveRefreshToken(ctx context.Context, email, refreshToken string, expiry time.Time) error
 	GetRefreshToken(ctx context.Context, refreshToken string) (string, error)
 	DeleteRefreshToken(ctx context.Context, refreshToken string) error
-}
-
-type UserService interface {
-	GetUser(ctx context.Context, email string) (*entities.User, error)
-	GetOrCreateUser(ctx context.Context, email, name string) (*entities.User, error)
 }
 
 type FirebaseAuth interface {

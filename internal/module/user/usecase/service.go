@@ -1,4 +1,4 @@
-package user
+package user_usecase
 
 import (
 	"context"
@@ -6,16 +6,17 @@ import (
 
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/infrastructure/logger"
+	user_repository "github.com/Financial-Partner/server/internal/module/user/repository"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Service struct {
-	repo  Repository
-	store UserStore
+	repo  user_repository.Repository
+	store user_repository.UserStore
 	log   logger.Logger
 }
 
-func NewService(repo Repository, store UserStore, log logger.Logger) *Service {
+func NewService(repo user_repository.Repository, store user_repository.UserStore, log logger.Logger) *Service {
 	return &Service{
 		repo:  repo,
 		store: store,

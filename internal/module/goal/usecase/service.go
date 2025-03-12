@@ -1,4 +1,4 @@
-package goal
+package goal_usecase
 
 import (
 	"context"

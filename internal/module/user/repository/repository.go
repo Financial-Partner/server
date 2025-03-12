@@ -1,4 +1,4 @@
-package user
+package user_repository
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 )
 
-//go:generate mockgen -source=repository.go -destination=mocks/user_repository_mock.go -package=mocks
+//go:generate mockgen -source=repository.go -destination=user_repository_mock.go -package=user_repository
 
 type Repository interface {
 	FindByEmail(ctx context.Context, email string) (*entities.User, error)
