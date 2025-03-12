@@ -16,7 +16,7 @@ linters-settings:
     simplify: true
   
 run:
-  deadline: 5m
+  timeout: 5m
   tests: true
 
 issues:
