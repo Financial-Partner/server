@@ -103,12 +103,14 @@ func ProvideRouter(
 	return router
 }
 
-func ProvideHTTPServer(router *mux.Router, cfg *config.Config) *http.Server {
-	return &http.Server{
+func ProvideServer(router *mux.Router, cfg *config.Config, log loggerInfra.Logger) *Server {
+	httpServer := &http.Server{
 		Addr:         ":" + cfg.Server.Port,
 		Handler:      router,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
+
+	return NewServer(httpServer, cfg, log)
 }

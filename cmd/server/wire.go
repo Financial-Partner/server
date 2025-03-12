@@ -4,12 +4,10 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/google/wire"
 )
 
-func InitializeServer(cfgFile string) (*http.Server, error) {
+func InitializeServer(cfgFile string) (*Server, error) {
 	wire.Build(
 		ProvideConfig,
 		ProvideLogger,
@@ -26,7 +24,7 @@ func InitializeServer(cfgFile string) (*http.Server, error) {
 		ProvideHandler,
 		ProvideAuthMiddleware,
 		ProvideRouter,
-		ProvideHTTPServer,
+		ProvideServer,
 	)
 	return nil, nil
 }

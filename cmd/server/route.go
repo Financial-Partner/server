@@ -24,6 +24,11 @@ func SetupRoutes(
 		httpSwagger.DomID("swagger-ui"),
 	))
 
+	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("OK"))
+	})
+
 	api := router.PathPrefix("/api").Subrouter()
 
 	setupPublicRoutes(api, handlers)

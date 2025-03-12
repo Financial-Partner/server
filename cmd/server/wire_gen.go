@@ -7,16 +7,12 @@
 package main
 
 import (
-	"net/http"
-)
-
-import (
 	_ "github.com/Financial-Partner/server/swagger"
 )
 
 // Injectors from wire.go:
 
-func InitializeServer(cfgFile string) (*http.Server, error) {
+func InitializeServer(cfgFile string) (*Server, error) {
 	config, err := ProvideConfig(cfgFile)
 	if err != nil {
 		return nil, err
@@ -44,6 +40,6 @@ func InitializeServer(cfgFile string) (*http.Server, error) {
 	handler := ProvideHandler(service, authService, goalService, logger)
 	authMiddleware := ProvideAuthMiddleware(jwtManager, logger)
 	router := ProvideRouter(handler, authMiddleware, config)
-	server := ProvideHTTPServer(router, config)
+	server := ProvideServer(router, config, logger)
 	return server, nil
 }
