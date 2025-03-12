@@ -16,11 +16,7 @@
 
 2. 安裝開發工具：
    ```bash
-   # 安裝 air（用於本地開發熱重載，可選）
-   go install github.com/cosmtrek/air@latest
-
-   # 安裝 mockgen（用於 generate mock files）
-   go install go.uber.org/mock/mockgen@latest
+   ./scripts/install_tools.sh
 
    # 執行設定腳本（安裝 linter 和設定 Git Hooks）
    ./scripts/setup.sh
@@ -38,6 +34,10 @@
 - **Pre-push**: 執行所有檢查，包含：
   - 所有 pre-commit 檢查
   - 單元測試
+
+## 依賴注入 (Wire)
+
+使用 [Wire](https://github.com/google/wire) 工具進行依賴注入，簡化複雜依賴關係的管理。
 
 ## 啟動服務
 
