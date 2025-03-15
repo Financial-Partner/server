@@ -18,7 +18,7 @@ import (
 type UserService interface {
 	GetUser(ctx context.Context, email string) (*entities.User, error)
 	GetOrCreateUser(ctx context.Context, email, name string) (*entities.User, error)
-	UpdateUserName(ctx context.Context, email, name string) (*entities.User, error)
+	UpdateUserName(ctx context.Context, id, name string) (*entities.User, error)
 }
 
 // UpdateUser UpdateUser
@@ -43,14 +43,14 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	email := r.Context().Value(contextutil.UserEmailKey)
-	if email == nil {
-		h.log.Errorf("User email not found in context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrEmailNotFound, http.StatusInternalServerError)
+	id, ok := contextutil.GetUserID(r.Context())
+	if !ok {
+		h.log.Errorf("User ID not found in context")
+		responde.WithError(w, r, h.log, nil, httperror.ErrUserIDNotFound, http.StatusInternalServerError)
 		return
 	}
 
-	updatedUser, err := h.userService.UpdateUserName(r.Context(), email.(string), req.Name)
+	updatedUser, err := h.userService.UpdateUserName(r.Context(), id, req.Name)
 	if err != nil {
 		h.log.WithError(err).Errorf("Failed to update user")
 		responde.WithError(w, r, h.log, err, httperror.ErrFailedToUpdateUser, http.StatusInternalServerError)
@@ -83,8 +83,8 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} dto.ErrorResponse "Internal server error"
 // @Router /users/me [get]
 func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
-	email := r.Context().Value(contextutil.UserEmailKey)
-	if email == nil {
+	email, ok := contextutil.GetUserEmail(r.Context())
+	if !ok {
 		h.log.Errorf("User email not found in context")
 		responde.WithError(w, r, h.log, nil, httperror.ErrEmailNotFound, http.StatusInternalServerError)
 		return
@@ -96,7 +96,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 		"scopes": scopes,
 	})
 
-	userEntity, err := h.userService.GetUser(r.Context(), email.(string))
+	userEntity, err := h.userService.GetUser(r.Context(), email)
 	if err != nil {
 		logger.WithError(err).Errorf("Failed to get user")
 		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetUser, http.StatusInternalServerError)

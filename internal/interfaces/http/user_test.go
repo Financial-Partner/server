@@ -43,7 +43,7 @@ func TestUpdateUser(t *testing.T) {
 		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
-	t.Run("Email not in context", func(t *testing.T) {
+	t.Run("UserID not in context", func(t *testing.T) {
 		h, _ := newTestHandler(t)
 
 		updateReq := dto.UpdateUserRequest{
@@ -63,14 +63,16 @@ func TestUpdateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, httperror.ErrEmailNotFound, errorResp.Message)
+		assert.Equal(t, httperror.ErrUserIDNotFound, errorResp.Message)
 	})
 
 	t.Run("Update user failed", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		objectID := primitive.NewObjectID()
+
 		mockServices.UserService.EXPECT().
-			UpdateUserName(gomock.Any(), "user@example.com", "New Name").
+			UpdateUserName(gomock.Any(), objectID.Hex(), "New Name").
 			Return(nil, errors.New("update failed"))
 
 		updateReq := dto.UpdateUserRequest{
@@ -79,7 +81,7 @@ func TestUpdateUser(t *testing.T) {
 		body, _ := json.Marshal(updateReq)
 
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
+		ctx = context.WithValue(ctx, contextutil.UserIDKey, objectID.Hex())
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("PUT", "/users/me", bytes.NewBuffer(body)).WithContext(ctx)
@@ -113,7 +115,7 @@ func TestUpdateUser(t *testing.T) {
 		}
 
 		mockServices.UserService.EXPECT().
-			UpdateUserName(gomock.Any(), "user@example.com", "New Name").
+			UpdateUserName(gomock.Any(), objectID.Hex(), "New Name").
 			Return(testUser, nil)
 
 		updateReq := dto.UpdateUserRequest{
@@ -122,7 +124,7 @@ func TestUpdateUser(t *testing.T) {
 		body, _ := json.Marshal(updateReq)
 
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
+		ctx = context.WithValue(ctx, contextutil.UserIDKey, objectID.Hex())
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("PUT", "/users/me", bytes.NewBuffer(body)).WithContext(ctx)
