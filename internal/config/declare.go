@@ -32,7 +32,7 @@ type Firebase struct {
 }
 
 type JWT struct {
-	SecretKey     string        `yaml:"secret_key"`
-	AccessExpiry  time.Duration `yaml:"access_expiry"`
-	RefreshExpiry time.Duration `yaml:"refresh_expiry"`
+	SecretKey     string        `mapstructure:"secret_key"`
+	AccessExpiry  time.Duration `mapstructure:"access_expiry"`
+	RefreshExpiry time.Duration `mapstructure:"refresh_expiry"`
 }
