@@ -719,13 +719,17 @@ const docTemplate = `{
                     "type": "string",
                     "example": "Investment in stock market is a good way to make money"
                 },
+                "duration": {
+                    "type": "string",
+                    "example": "a month"
+                },
                 "is_increase": {
                     "type": "boolean",
                     "example": true
                 },
-                "status": {
+                "min_amount": {
                     "type": "integer",
-                    "example": 20
+                    "example": 1000
                 },
                 "tags": {
                     "type": "array",
@@ -744,6 +748,10 @@ const docTemplate = `{
                 "updated_at": {
                     "type": "string",
                     "example": "2023-06-01T00:00:00Z"
+                },
+                "variation": {
+                    "type": "integer",
+                    "example": 20
                 }
             }
         },

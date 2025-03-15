@@ -50,7 +50,9 @@ func (h *Handler) GetInvestments(w http.ResponseWriter, r *http.Request) {
 			Description: investment.Description,
 			Tags:        investment.Tags,
 			IsIncrease:  investment.IsIncrease,
-			Status:      investment.Status,
+			Variation:   investment.Variation,
+			Duration:    investment.Duration,
+			MinAmount:   investment.MinAmount,
 			CreatedAt:   investment.CreatedAt.Format(time.RFC3339),
 			UpdatedAt:   investment.UpdatedAt.Format(time.RFC3339),
 		})

@@ -135,11 +135,14 @@ definitions:
       description:
         example: Investment in stock market is a good way to make money
         type: string
+      duration:
+        example: a month
+        type: string
       is_increase:
         example: true
         type: boolean
-      status:
-        example: 20
+      min_amount:
+        example: 1000
         type: integer
       tags:
         example:
@@ -154,6 +157,9 @@ definitions:
       updated_at:
         example: "2023-06-01T00:00:00Z"
         type: string
+      variation:
+        example: 20
+        type: integer
     type: object
   dto.LoginRequest:
     properties:

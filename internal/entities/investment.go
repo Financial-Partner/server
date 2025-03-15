@@ -11,7 +11,9 @@ type Investment struct {
 	Description string
 	Tags        []string
 	IsIncrease  bool
-	Status      int64
+	Variation   int64
+	Duration    string
+	MinAmount   int64
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
