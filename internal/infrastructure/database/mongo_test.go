@@ -7,7 +7,6 @@ import (
 
 	"github.com/Financial-Partner/server/internal/config"
 	"github.com/Financial-Partner/server/internal/infrastructure/database"
-	"github.com/Financial-Partner/server/internal/infrastructure/database/mocks"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -21,7 +20,7 @@ func TestNewClient(t *testing.T) {
 	cfg := &config.Config{}
 
 	t.Run("success", func(t *testing.T) {
-		mockClient := mocks.NewMockMongoClient(ctrl)
+		mockClient := database.NewMockMongoClient(ctrl)
 		mockClient.EXPECT().Ping(gomock.Any(), nil).Return(nil)
 		mockClient.EXPECT().Database(gomock.Any(), gomock.Any()).Return(nil)
 
@@ -35,7 +34,7 @@ func TestNewClient(t *testing.T) {
 	})
 
 	t.Run("ping error", func(t *testing.T) {
-		mockClient := mocks.NewMockMongoClient(ctrl)
+		mockClient := database.NewMockMongoClient(ctrl)
 		mockClient.EXPECT().Ping(gomock.Any(), nil).Return(errors.New("ping error"))
 
 		connectFunc := func(ctx context.Context, opts ...*options.ClientOptions) (database.MongoClient, error) {
@@ -73,7 +72,7 @@ func TestClientCollection(t *testing.T) {
 	cfg := &config.Config{}
 
 	mt.Run("success", func(mt *mtest.T) {
-		mockClient := mocks.NewMockMongoClient(ctrl)
+		mockClient := database.NewMockMongoClient(ctrl)
 		mockClient.EXPECT().Ping(gomock.Any(), nil).Return(nil)
 		mockDB := mt.Client.Database(mt.DB.Name(), nil)
 		mockClient.EXPECT().Database(gomock.Any(), gomock.Any()).Return(mockDB)
@@ -100,7 +99,7 @@ func TestClientClose(t *testing.T) {
 	cfg := &config.Config{}
 
 	mt.Run("success", func(mt *mtest.T) {
-		mockClient := mocks.NewMockMongoClient(ctrl)
+		mockClient := database.NewMockMongoClient(ctrl)
 		mockClient.EXPECT().Ping(gomock.Any(), nil).Return(nil)
 		mockDB := mt.Client.Database(mt.DB.Name(), nil)
 		mockClient.EXPECT().Database(gomock.Any(), gomock.Any()).Return(mockDB)

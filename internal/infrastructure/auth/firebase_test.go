@@ -11,7 +11,6 @@ import (
 
 	"github.com/Financial-Partner/server/internal/config"
 	"github.com/Financial-Partner/server/internal/infrastructure/auth"
-	"github.com/Financial-Partner/server/internal/infrastructure/auth/mocks"
 )
 
 func TestNewClient(t *testing.T) {
@@ -29,7 +28,7 @@ func TestNewClient(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockAuth := mocks.NewMockFirebaseAuth(ctrl)
+		mockAuth := auth.NewMockFirebaseAuth(ctrl)
 		client := auth.NewWithAuth(mockAuth)
 		assert.NotNil(t, client)
 	})
@@ -40,7 +39,7 @@ func TestVerifyToken(t *testing.T) {
 	defer ctrl.Finish()
 
 	t.Run("Success case", func(t *testing.T) {
-		mockAuth := mocks.NewMockFirebaseAuth(ctrl)
+		mockAuth := auth.NewMockFirebaseAuth(ctrl)
 		client := auth.NewWithAuth(mockAuth)
 
 		expectedToken := &fbAuth.Token{
@@ -63,7 +62,7 @@ func TestVerifyToken(t *testing.T) {
 	})
 
 	t.Run("Error case - invalid token", func(t *testing.T) {
-		mockAuth := mocks.NewMockFirebaseAuth(ctrl)
+		mockAuth := auth.NewMockFirebaseAuth(ctrl)
 		client := auth.NewWithAuth(mockAuth)
 
 		mockAuth.EXPECT().
@@ -78,7 +77,7 @@ func TestVerifyToken(t *testing.T) {
 	})
 
 	t.Run("Error case - expired token", func(t *testing.T) {
-		mockAuth := mocks.NewMockFirebaseAuth(ctrl)
+		mockAuth := auth.NewMockFirebaseAuth(ctrl)
 		client := auth.NewWithAuth(mockAuth)
 
 		mockAuth.EXPECT().

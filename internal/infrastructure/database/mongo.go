@@ -11,7 +11,7 @@ import (
 	"github.com/Financial-Partner/server/internal/config"
 )
 
-//go:generate mockgen -source=mongo.go -destination=mocks/mongo.go -package=mocks
+//go:generate mockgen -source=mongo.go -destination=mongo_mock.go -package=database
 
 type MongoClient interface {
 	Ping(ctx context.Context, rp *readpref.ReadPref) error

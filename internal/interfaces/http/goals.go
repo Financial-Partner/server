@@ -13,7 +13,7 @@ import (
 	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
-//go:generate mockgen -source=goals.go -destination=mocks/goals_mock.go -package=mocks
+//go:generate mockgen -source=goals.go -destination=goals_mock.go -package=handler
 
 type GoalService interface {
 	GetGoalSuggestion(ctx context.Context, userID string, req *dto.GoalSuggestionRequest) (*entities.GoalSuggestion, error)

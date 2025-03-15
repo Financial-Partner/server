@@ -1,4 +1,4 @@
-package middleware
+package middleware_test
 
 import (
 	"context"
@@ -14,7 +14,7 @@ import (
 	"github.com/Financial-Partner/server/internal/contextutil"
 	"github.com/Financial-Partner/server/internal/infrastructure/auth"
 	"github.com/Financial-Partner/server/internal/infrastructure/logger"
-	middleMocks "github.com/Financial-Partner/server/internal/interfaces/http/middleware/mocks"
+	"github.com/Financial-Partner/server/internal/interfaces/http/middleware"
 )
 
 type contextKey string
@@ -23,10 +23,10 @@ func TestNewAuthMiddleware(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockJWTValidator := middleMocks.NewMockJWTValidator(ctrl)
+	mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
 	mockLogger := logger.NewNopLogger()
 
-	middleware := NewAuthMiddleware(mockJWTValidator, mockLogger)
+	middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
 	assert.NotNil(t, middleware)
 }
@@ -36,7 +36,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockJWTValidator := middleMocks.NewMockJWTValidator(ctrl)
+		mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
 		mockLogger := logger.NewNopLogger()
 
 		token := &auth.Claims{
@@ -44,7 +44,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		}
 		mockJWTValidator.EXPECT().ValidateToken("valid-token").Return(token, nil)
 
-		middleware := NewAuthMiddleware(mockJWTValidator, mockLogger)
+		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
 		var capturedEmail string
 		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -69,10 +69,10 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockJWTValidator := middleMocks.NewMockJWTValidator(ctrl)
+		mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
 		mockLogger := logger.NewNopLogger()
 
-		middleware := NewAuthMiddleware(mockJWTValidator, mockLogger)
+		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
 		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			t.Fatal("Next handler should not be called")
@@ -92,13 +92,13 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockJWTValidator := middleMocks.NewMockJWTValidator(ctrl)
+		mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
 		mockLogger := logger.NewNopLogger()
 
 		tokenError := errors.New("invalid token")
 		mockJWTValidator.EXPECT().ValidateToken("invalid-token").Return(nil, tokenError)
 
-		middleware := NewAuthMiddleware(mockJWTValidator, mockLogger)
+		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
 		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			t.Fatal("Next handler should not be called")
@@ -119,7 +119,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockJWTValidator := middleMocks.NewMockJWTValidator(ctrl)
+		mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
 		mockLogger := logger.NewNopLogger()
 
 		token := &auth.Claims{
@@ -127,7 +127,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		}
 		mockJWTValidator.EXPECT().ValidateToken("no-email-token").Return(token, nil)
 
-		middleware := NewAuthMiddleware(mockJWTValidator, mockLogger)
+		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
 		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			t.Fatal("Next handler should not be called")
@@ -148,7 +148,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockJWTValidator := middleMocks.NewMockJWTValidator(ctrl)
+		mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
 		mockLogger := logger.NewNopLogger()
 
 		token := &auth.Claims{
@@ -157,7 +157,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		mockJWTValidator.EXPECT().ValidateToken("valid-token").Return(token, nil)
 		mockLogger.WithField("email", "test@example.com").Infof("User authenticated successfully", gomock.Any())
 
-		middleware := NewAuthMiddleware(mockJWTValidator, mockLogger)
+		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
 		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
@@ -177,7 +177,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
-		mockJWTValidator := middleMocks.NewMockJWTValidator(ctrl)
+		mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
 		mockLogger := logger.NewNopLogger()
 
 		token := &auth.Claims{
@@ -186,7 +186,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		mockJWTValidator.EXPECT().ValidateToken("valid-token").Return(token, nil)
 		mockLogger.WithField("email", "test@example.com").Infof("User authenticated successfully", gomock.Any())
 
-		middleware := NewAuthMiddleware(mockJWTValidator, mockLogger)
+		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
 		var capturedCtx context.Context
 		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

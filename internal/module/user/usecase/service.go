@@ -10,6 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+const (
+	BypassUserEmail = "bypass@example.com"
+)
+
 type Service struct {
 	repo  user_repository.Repository
 	store user_repository.UserStore
@@ -25,6 +29,11 @@ func NewService(repo user_repository.Repository, store user_repository.UserStore
 }
 
 func (s *Service) GetUser(ctx context.Context, email string) (*entities.User, error) {
+	// Special handling for bypass user
+	if email == BypassUserEmail {
+		return s.getBypassUser(ctx)
+	}
+
 	entity, err := s.store.Get(ctx, email)
 	if err == nil {
 		return entity, nil
@@ -41,6 +50,11 @@ func (s *Service) GetUser(ctx context.Context, email string) (*entities.User, er
 }
 
 func (s *Service) GetOrCreateUser(ctx context.Context, email, name string) (*entities.User, error) {
+	// Special handling for bypass user
+	if email == BypassUserEmail {
+		return s.getBypassUser(ctx)
+	}
+
 	logger := s.log.WithField("email", email)
 
 	entity, err := s.GetUser(ctx, email)
@@ -83,4 +97,31 @@ func (s *Service) setUserToStore(ctx context.Context, entity *entities.User) {
 	if err != nil {
 		s.log.WithError(err).Errorf("Failed to create user in store")
 	}
+}
+
+// getBypassUser returns a fake/bypass user without accessing the database
+func (s *Service) getBypassUser(_ context.Context) (*entities.User, error) {
+	objectID, _ := primitive.ObjectIDFromHex("000000000000000000000001")
+	characterID := primitive.NewObjectID()
+
+	bypassUser := &entities.User{
+		ID:    objectID,
+		Email: BypassUserEmail,
+		Name:  "Bypass User",
+		Wallet: entities.Wallet{
+			Diamonds: 1000,
+			Savings:  1000,
+		},
+		Character: entities.Character{
+			ID:       characterID.Hex(),
+			Name:     "Bypass Character",
+			ImageURL: "https://example.com/bypass-character.png",
+		},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	s.log.WithField("email", BypassUserEmail).Infof("Access using bypass user")
+
+	return bypassUser, nil
 }

@@ -13,24 +13,24 @@ func NewTokenStore(client RedisClient) *TokenStore {
 	return &TokenStore{client: client}
 }
 
-func (s *TokenStore) SaveRefreshToken(ctx context.Context, email, refreshToken string, expiry time.Time) error {
+func (s *TokenStore) SaveRefreshToken(ctx context.Context, id, refreshToken string, expiry time.Time) error {
 	key := "refresh_token:" + refreshToken
 
 	ttl := time.Until(expiry)
 
-	return s.client.Set(ctx, key, email, ttl)
+	return s.client.Set(ctx, key, id, ttl)
 }
 
 func (s *TokenStore) GetRefreshToken(ctx context.Context, refreshToken string) (string, error) {
 	key := "refresh_token:" + refreshToken
 
-	var email string
-	err := s.client.Get(ctx, key, &email)
+	var id string
+	err := s.client.Get(ctx, key, &id)
 	if err != nil {
 		return "", err
 	}
 
-	return email, nil
+	return id, nil
 }
 
 func (s *TokenStore) DeleteRefreshToken(ctx context.Context, refreshToken string) error {

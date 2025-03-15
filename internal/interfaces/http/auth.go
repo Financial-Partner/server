@@ -12,7 +12,7 @@ import (
 	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
-//go:generate mockgen -source=auth.go -destination=mocks/auth_mock.go -package=mocks
+//go:generate mockgen -source=auth.go -destination=auth_mock.go -package=handler
 
 type AuthService interface {
 	LoginWithFirebase(ctx context.Context, firebaseToken string) (accessToken, refreshToken string, expiresIn int, userInfo *entities.User, err error)

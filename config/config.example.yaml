@@ -14,6 +14,8 @@ redis:
 firebase:
   project_id: "your-project-id"
   credential_file: "config/firebase_credential.json"
+  bypass_token: "your-bypass-token"
+  bypass_enabled: true
 
 jwt:
   secret_key: "your-secret-key"

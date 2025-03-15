@@ -29,10 +29,12 @@ type Redis struct {
 type Firebase struct {
 	ProjectID      string `mapstructure:"project_id"`
 	CredentialFile string `mapstructure:"credential_file"`
+	BypassToken    string `mapstructure:"bypass_token"`
+	BypassEnabled  bool   `mapstructure:"bypass_enabled"`
 }
 
 type JWT struct {
-	SecretKey     string        `yaml:"secret_key"`
-	AccessExpiry  time.Duration `yaml:"access_expiry"`
-	RefreshExpiry time.Duration `yaml:"refresh_expiry"`
+	SecretKey     string        `mapstructure:"secret_key"`
+	AccessExpiry  time.Duration `mapstructure:"access_expiry"`
+	RefreshExpiry time.Duration `mapstructure:"refresh_expiry"`
 }

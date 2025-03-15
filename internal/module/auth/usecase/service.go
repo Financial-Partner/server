@@ -58,17 +58,17 @@ func (s *Service) LoginWithFirebase(ctx context.Context, firebaseToken string) (
 		return "", "", 0, nil, fmt.Errorf("failed to get or create user: %w", err)
 	}
 
-	accessToken, expiryTime, err := s.jwtManager.GenerateAccessToken(email)
+	accessToken, expiryTime, err := s.jwtManager.GenerateAccessToken(user.ID.Hex(), email)
 	if err != nil {
 		return "", "", 0, nil, fmt.Errorf("failed to generate access token: %w", err)
 	}
 
-	refreshToken, refreshExpiryTime, err := s.jwtManager.GenerateRefreshToken(email)
+	refreshToken, refreshExpiryTime, err := s.jwtManager.GenerateRefreshToken(user.ID.Hex(), email)
 	if err != nil {
 		return "", "", 0, nil, fmt.Errorf("failed to generate refresh token: %w", err)
 	}
 
-	err = s.tokenStore.SaveRefreshToken(ctx, email, refreshToken, refreshExpiryTime)
+	err = s.tokenStore.SaveRefreshToken(ctx, user.ID.Hex(), refreshToken, refreshExpiryTime)
 	if err != nil {
 		return "", "", 0, nil, fmt.Errorf("failed to save refresh token: %w", err)
 	}
@@ -84,21 +84,21 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (newAcc
 		return "", "", 0, fmt.Errorf("invalid refresh token: %w", err)
 	}
 
-	email, err := s.tokenStore.GetRefreshToken(ctx, refreshToken)
+	id, err := s.tokenStore.GetRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return "", "", 0, fmt.Errorf("refresh token not found: %w", err)
 	}
 
-	if email != claims.Email {
-		return "", "", 0, fmt.Errorf("token email mismatch")
+	if id != claims.ID {
+		return "", "", 0, fmt.Errorf("token id mismatch")
 	}
 
-	accessToken, expiryTime, err := s.jwtManager.GenerateAccessToken(email)
+	accessToken, expiryTime, err := s.jwtManager.GenerateAccessToken(claims.ID, claims.Email)
 	if err != nil {
 		return "", "", 0, fmt.Errorf("failed to generate access token: %w", err)
 	}
 
-	newRefreshToken, refreshExpiryTime, err := s.jwtManager.GenerateRefreshToken(email)
+	newRefreshToken, refreshExpiryTime, err := s.jwtManager.GenerateRefreshToken(claims.ID, claims.Email)
 	if err != nil {
 		return "", "", 0, fmt.Errorf("failed to generate refresh token: %w", err)
 	}
@@ -107,7 +107,7 @@ func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (newAcc
 		return "", "", 0, fmt.Errorf("failed to delete old refresh token: %w", err)
 	}
 
-	if err := s.tokenStore.SaveRefreshToken(ctx, email, newRefreshToken, refreshExpiryTime); err != nil {
+	if err := s.tokenStore.SaveRefreshToken(ctx, claims.ID, newRefreshToken, refreshExpiryTime); err != nil {
 		return "", "", 0, fmt.Errorf("failed to save new refresh token: %w", err)
 	}
 

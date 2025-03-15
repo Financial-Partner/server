@@ -46,6 +46,7 @@ func setupPublicRoutes(router *mux.Router, handlers *handler.Handler) {
 
 func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	userRoutes := router.PathPrefix("/users").Subrouter()
+	// WHY: create user will happen after exchange token by firebase token, so it belongs to protected route
 	userRoutes.HandleFunc("", handlers.CreateUser).Methods(http.MethodPost)
 	userRoutes.HandleFunc("/me", handlers.GetUser).Methods(http.MethodGet)
 	userRoutes.HandleFunc("/me", handlers.UpdateUser).Methods(http.MethodPut)
