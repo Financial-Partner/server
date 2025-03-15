@@ -14,6 +14,7 @@ type JWTManager struct {
 }
 
 type Claims struct {
+	ID    string `json:"id"`
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
@@ -26,10 +27,11 @@ func NewJWTManager(secretKey string, accessExpiry, refreshExpiry time.Duration) 
 	}
 }
 
-func (m *JWTManager) GenerateAccessToken(email string) (string, time.Time, error) {
+func (m *JWTManager) GenerateAccessToken(id, email string) (string, time.Time, error) {
 	expiresAt := time.Now().Add(m.accessExpiry)
 
 	claims := &Claims{
+		ID:    id,
 		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
@@ -47,10 +49,11 @@ func (m *JWTManager) GenerateAccessToken(email string) (string, time.Time, error
 	return tokenString, expiresAt, nil
 }
 
-func (m *JWTManager) GenerateRefreshToken(email string) (string, time.Time, error) {
+func (m *JWTManager) GenerateRefreshToken(id, email string) (string, time.Time, error) {
 	expiresAt := time.Now().Add(m.refreshExpiry)
 
 	claims := &Claims{
+		ID:    id,
 		Email: email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),

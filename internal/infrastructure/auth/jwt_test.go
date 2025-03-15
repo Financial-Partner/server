@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/Financial-Partner/server/internal/infrastructure/auth"
 )
@@ -18,9 +19,10 @@ func TestJWTManager(t *testing.T) {
 	jwtManager := auth.NewJWTManager(secretKey, accessExpiry, refreshExpiry)
 
 	t.Run("GenerateAccessToken", func(t *testing.T) {
+		id := primitive.NewObjectID().Hex()
 		email := "test@example.com"
 
-		token, expiryTime, err := jwtManager.GenerateAccessToken(email)
+		token, expiryTime, err := jwtManager.GenerateAccessToken(id, email)
 
 		require.NoError(t, err)
 		require.NotEmpty(t, token)
@@ -30,13 +32,15 @@ func TestJWTManager(t *testing.T) {
 
 		claims, err := jwtManager.ValidateToken(token)
 		require.NoError(t, err)
+		assert.Equal(t, id, claims.ID)
 		assert.Equal(t, email, claims.Email)
 	})
 
 	t.Run("GenerateRefreshToken", func(t *testing.T) {
+		id := primitive.NewObjectID().Hex()
 		email := "test@example.com"
 
-		token, expiryTime, err := jwtManager.GenerateRefreshToken(email)
+		token, expiryTime, err := jwtManager.GenerateRefreshToken(id, email)
 
 		require.NoError(t, err)
 		require.NotEmpty(t, token)
@@ -46,14 +50,17 @@ func TestJWTManager(t *testing.T) {
 
 		claims, err := jwtManager.ValidateToken(token)
 		require.NoError(t, err)
+		assert.Equal(t, id, claims.ID)
 		assert.Equal(t, email, claims.Email)
 	})
 
 	t.Run("ValidateToken_Valid", func(t *testing.T) {
+		id := primitive.NewObjectID().Hex()
 		email := "test@example.com"
 		expiresAt := time.Now().Add(time.Hour)
 
 		claims := &auth.Claims{
+			ID:    id,
 			Email: email,
 			RegisteredClaims: jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(expiresAt),
@@ -68,14 +75,17 @@ func TestJWTManager(t *testing.T) {
 		parsedClaims, err := jwtManager.ValidateToken(tokenString)
 
 		require.NoError(t, err)
+		assert.Equal(t, id, parsedClaims.ID)
 		assert.Equal(t, email, parsedClaims.Email)
 	})
 
 	t.Run("ValidateToken_Expired", func(t *testing.T) {
+		id := primitive.NewObjectID().Hex()
 		email := "test@example.com"
 		expiresAt := time.Now().Add(-time.Hour)
 
 		claims := &auth.Claims{
+			ID:    id,
 			Email: email,
 			RegisteredClaims: jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(expiresAt),
@@ -95,8 +105,10 @@ func TestJWTManager(t *testing.T) {
 	})
 
 	t.Run("ValidateToken_InvalidSignature", func(t *testing.T) {
+		id := primitive.NewObjectID().Hex()
 		email := "test@example.com"
 		claims := &auth.Claims{
+			ID:    id,
 			Email: email,
 			RegisteredClaims: jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour)),

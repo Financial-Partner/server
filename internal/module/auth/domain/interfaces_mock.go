@@ -72,17 +72,17 @@ func (mr *MockTokenStoreMockRecorder) GetRefreshToken(ctx, refreshToken any) *go
 }
 
 // SaveRefreshToken mocks base method.
-func (m *MockTokenStore) SaveRefreshToken(ctx context.Context, email, refreshToken string, expiry time.Time) error {
+func (m *MockTokenStore) SaveRefreshToken(ctx context.Context, id, refreshToken string, expiry time.Time) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SaveRefreshToken", ctx, email, refreshToken, expiry)
+	ret := m.ctrl.Call(m, "SaveRefreshToken", ctx, id, refreshToken, expiry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SaveRefreshToken indicates an expected call of SaveRefreshToken.
-func (mr *MockTokenStoreMockRecorder) SaveRefreshToken(ctx, email, refreshToken, expiry any) *gomock.Call {
+func (mr *MockTokenStoreMockRecorder) SaveRefreshToken(ctx, id, refreshToken, expiry any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveRefreshToken", reflect.TypeOf((*MockTokenStore)(nil).SaveRefreshToken), ctx, email, refreshToken, expiry)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SaveRefreshToken", reflect.TypeOf((*MockTokenStore)(nil).SaveRefreshToken), ctx, id, refreshToken, expiry)
 }
 
 // MockFirebaseAuth is a mock of FirebaseAuth interface.
@@ -149,9 +149,9 @@ func (m *MockJWTManager) EXPECT() *MockJWTManagerMockRecorder {
 }
 
 // GenerateAccessToken mocks base method.
-func (m *MockJWTManager) GenerateAccessToken(email string) (string, time.Time, error) {
+func (m *MockJWTManager) GenerateAccessToken(id, email string) (string, time.Time, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateAccessToken", email)
+	ret := m.ctrl.Call(m, "GenerateAccessToken", id, email)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(time.Time)
 	ret2, _ := ret[2].(error)
@@ -159,15 +159,15 @@ func (m *MockJWTManager) GenerateAccessToken(email string) (string, time.Time, e
 }
 
 // GenerateAccessToken indicates an expected call of GenerateAccessToken.
-func (mr *MockJWTManagerMockRecorder) GenerateAccessToken(email any) *gomock.Call {
+func (mr *MockJWTManagerMockRecorder) GenerateAccessToken(id, email any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateAccessToken", reflect.TypeOf((*MockJWTManager)(nil).GenerateAccessToken), email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateAccessToken", reflect.TypeOf((*MockJWTManager)(nil).GenerateAccessToken), id, email)
 }
 
 // GenerateRefreshToken mocks base method.
-func (m *MockJWTManager) GenerateRefreshToken(email string) (string, time.Time, error) {
+func (m *MockJWTManager) GenerateRefreshToken(id, email string) (string, time.Time, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateRefreshToken", email)
+	ret := m.ctrl.Call(m, "GenerateRefreshToken", id, email)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(time.Time)
 	ret2, _ := ret[2].(error)
@@ -175,9 +175,9 @@ func (m *MockJWTManager) GenerateRefreshToken(email string) (string, time.Time, 
 }
 
 // GenerateRefreshToken indicates an expected call of GenerateRefreshToken.
-func (mr *MockJWTManagerMockRecorder) GenerateRefreshToken(email any) *gomock.Call {
+func (mr *MockJWTManagerMockRecorder) GenerateRefreshToken(id, email any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateRefreshToken", reflect.TypeOf((*MockJWTManager)(nil).GenerateRefreshToken), email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateRefreshToken", reflect.TypeOf((*MockJWTManager)(nil).GenerateRefreshToken), id, email)
 }
 
 // ValidateToken mocks base method.

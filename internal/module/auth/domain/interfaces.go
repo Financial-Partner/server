@@ -10,7 +10,7 @@ import (
 //go:generate mockgen -source=interfaces.go -destination=interfaces_mock.go -package=auth_domain
 
 type TokenStore interface {
-	SaveRefreshToken(ctx context.Context, email, refreshToken string, expiry time.Time) error
+	SaveRefreshToken(ctx context.Context, id, refreshToken string, expiry time.Time) error
 	GetRefreshToken(ctx context.Context, refreshToken string) (string, error)
 	DeleteRefreshToken(ctx context.Context, refreshToken string) error
 }
@@ -20,7 +20,7 @@ type FirebaseAuth interface {
 }
 
 type JWTManager interface {
-	GenerateAccessToken(email string) (string, time.Time, error)
-	GenerateRefreshToken(email string) (string, time.Time, error)
+	GenerateAccessToken(id, email string) (string, time.Time, error)
+	GenerateRefreshToken(id, email string) (string, time.Time, error)
 	ValidateToken(tokenString string) (*auth.Claims, error)
 }
