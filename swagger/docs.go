@@ -363,6 +363,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/investments": {
+            "get": {
+                "description": "Get investments for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "investments"
+                ],
+                "summary": "Get investments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetInvestmentsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/me": {
             "get": {
                 "security": [
@@ -539,6 +583,17 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.GetInvestmentsResponse": {
+            "type": "object",
+            "properties": {
+                "investments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.InvestmentResponse"
+                    }
+                }
+            }
+        },
         "dto.GetUserResponse": {
             "type": "object",
             "properties": {
@@ -650,6 +705,45 @@ const docTemplate = `{
                 "suggested_amount": {
                     "type": "integer",
                     "example": 15000
+                }
+            }
+        },
+        "dto.InvestmentResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Investment in stock market is a good way to make money"
+                },
+                "is_increase": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "status": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "stock",
+                        " market"
+                    ]
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Investment in stock market"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-06-01T00:00:00Z"
                 }
             }
         },

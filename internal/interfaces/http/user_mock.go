@@ -72,16 +72,16 @@ func (mr *MockUserServiceMockRecorder) GetUser(ctx, email any) *gomock.Call {
 }
 
 // UpdateUserName mocks base method.
-func (m *MockUserService) UpdateUserName(ctx context.Context, email, name string) (*entities.User, error) {
+func (m *MockUserService) UpdateUserName(ctx context.Context, id, name string) (*entities.User, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateUserName", ctx, email, name)
+	ret := m.ctrl.Call(m, "UpdateUserName", ctx, id, name)
 	ret0, _ := ret[0].(*entities.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // UpdateUserName indicates an expected call of UpdateUserName.
-func (mr *MockUserServiceMockRecorder) UpdateUserName(ctx, email, name any) *gomock.Call {
+func (mr *MockUserServiceMockRecorder) UpdateUserName(ctx, id, name any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserName", reflect.TypeOf((*MockUserService)(nil).UpdateUserName), ctx, email, name)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserName", reflect.TypeOf((*MockUserService)(nil).UpdateUserName), ctx, id, name)
 }
