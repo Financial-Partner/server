@@ -40,6 +40,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		mockLogger := logger.NewNopLogger()
 
 		token := &auth.Claims{
+			ID:    "test-id",
 			Email: "test@example.com",
 		}
 		mockJWTValidator.EXPECT().ValidateToken("valid-token").Return(token, nil)
@@ -123,6 +124,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		mockLogger := logger.NewNopLogger()
 
 		token := &auth.Claims{
+			ID:    "test-id",
 			Email: "",
 		}
 		mockJWTValidator.EXPECT().ValidateToken("no-email-token").Return(token, nil)
@@ -144,7 +146,7 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		assert.Contains(t, w.Body.String(), "Unable to retrieve user email")
 	})
 
-	t.Run("BearerPrefix", func(t *testing.T) {
+	t.Run("NoIDInToken", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -154,8 +156,37 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		token := &auth.Claims{
 			Email: "test@example.com",
 		}
+		mockJWTValidator.EXPECT().ValidateToken("no-id-token").Return(token, nil)
+
+		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
+
+		nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			t.Fatal("Next handler should not be called")
+		})
+
+		req := httptest.NewRequest("GET", "/api/test", nil)
+		req.Header.Set("Authorization", "Bearer no-id-token")
+		w := httptest.NewRecorder()
+
+		handler := middleware.Authenticate(nextHandler)
+		handler.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+		assert.Contains(t, w.Body.String(), "Unable to retrieve user ID")
+	})
+
+	t.Run("BearerPrefix", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		mockJWTValidator := middleware.NewMockJWTValidator(ctrl)
+		mockLogger := logger.NewNopLogger()
+
+		token := &auth.Claims{
+			ID:    "test-id",
+			Email: "test@example.com",
+		}
 		mockJWTValidator.EXPECT().ValidateToken("valid-token").Return(token, nil)
-		mockLogger.WithField("email", "test@example.com").Infof("User authenticated successfully", gomock.Any())
 
 		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
@@ -181,10 +212,10 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		mockLogger := logger.NewNopLogger()
 
 		token := &auth.Claims{
+			ID:    "test-id",
 			Email: "test@example.com",
 		}
 		mockJWTValidator.EXPECT().ValidateToken("valid-token").Return(token, nil)
-		mockLogger.WithField("email", "test@example.com").Infof("User authenticated successfully", gomock.Any())
 
 		middleware := middleware.NewAuthMiddleware(mockJWTValidator, mockLogger)
 
@@ -208,5 +239,9 @@ func TestAuthMiddlewareAuthenticate(t *testing.T) {
 		email, ok := contextutil.GetUserEmail(capturedCtx)
 		assert.True(t, ok)
 		assert.Equal(t, "test@example.com", email)
+
+		id, ok := contextutil.GetUserID(capturedCtx)
+		assert.True(t, ok)
+		assert.Equal(t, "test-id", id)
 	})
 }

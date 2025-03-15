@@ -45,14 +45,24 @@ func (m *AuthMiddleware) Authenticate(next http.Handler) http.Handler {
 			return
 		}
 
+		if claims.ID == "" {
+			m.log.Warnf("No user ID found in token claims")
+			http.Error(w, "Unable to retrieve user ID", http.StatusUnauthorized)
+			return
+		}
+
 		if claims.Email == "" {
 			m.log.Warnf("No email found in token claims")
 			http.Error(w, "Unable to retrieve user email", http.StatusUnauthorized)
 			return
 		}
 
-		m.log.WithField("email", claims.Email).Infof("User authenticated successfully")
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, claims.Email)
+		m.log.WithFields(map[string]any{
+			"email": claims.Email,
+			"id":    claims.ID,
+		}).Infof("User authenticated successfully")
+		ctx := context.WithValue(r.Context(), contextutil.UserIDKey, claims.ID)
+		ctx = context.WithValue(ctx, contextutil.UserEmailKey, claims.Email)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
