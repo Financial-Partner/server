@@ -75,7 +75,9 @@ func TestGetInvestments(t *testing.T) {
 				Description: "Test description",
 				Tags:        []string{"test", "investments"},
 				IsIncrease:  true,
-				Status:      30,
+				Variation:   30,
+				Duration:    "a month",
+				MinAmount:   1000,
 				CreatedAt:   now.AddDate(0, -1, 0),
 				UpdatedAt:   now,
 			},
@@ -98,11 +100,15 @@ func TestGetInvestments(t *testing.T) {
 		var response dto.GetInvestmentsResponse
 		err := json.NewDecoder(w.Body).Decode(&response)
 		assert.NoError(t, err)
+		// Compare the response with the expected data
+		assert.Len(t, response.Investments, 1)
 		assert.Equal(t, investments[0].Title, response.Investments[0].Title)
 		assert.Equal(t, investments[0].Description, response.Investments[0].Description)
 		assert.Equal(t, investments[0].Tags, response.Investments[0].Tags)
 		assert.Equal(t, investments[0].IsIncrease, response.Investments[0].IsIncrease)
-		assert.Equal(t, investments[0].Status, response.Investments[0].Status)
+		assert.Equal(t, investments[0].Variation, response.Investments[0].Variation)
+		assert.Equal(t, investments[0].Duration, response.Investments[0].Duration)
+		assert.Equal(t, investments[0].MinAmount, response.Investments[0].MinAmount)
 		assert.Equal(t, investments[0].CreatedAt.Format(time.RFC3339), response.Investments[0].CreatedAt)
 		assert.Equal(t, investments[0].UpdatedAt.Format(time.RFC3339), response.Investments[0].UpdatedAt)
 	})
