@@ -10,7 +10,7 @@ import (
 	"github.com/Financial-Partner/server/internal/config"
 )
 
-//go:generate mockgen -source=firebase.go -destination=mocks/firebase_mock.go -package=mocks
+//go:generate mockgen -source=firebase.go -destination=firebase_mock.go -package=auth
 
 type FirebaseAuth interface {
 	VerifyIDToken(ctx context.Context, idToken string) (*Token, error)

@@ -13,7 +13,7 @@ import (
 	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
-//go:generate mockgen -source=user.go -destination=mocks/user_mock.go -package=mocks
+//go:generate mockgen -source=user.go -destination=user_mock.go -package=handler
 
 type UserService interface {
 	GetUser(ctx context.Context, email string) (*entities.User, error)

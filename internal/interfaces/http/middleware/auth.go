@@ -10,7 +10,7 @@ import (
 	"github.com/Financial-Partner/server/internal/infrastructure/logger"
 )
 
-//go:generate mockgen -source=auth.go -destination=mocks/auth_mock.go -package=mocks
+//go:generate mockgen -source=auth.go -destination=auth_mock.go -package=middleware
 
 type JWTValidator interface {
 	ValidateToken(tokenString string) (*auth.Claims, error)

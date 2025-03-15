@@ -35,9 +35,9 @@ func InitializeServer(cfgFile string) (*Server, error) {
 	}
 	jwtManager := ProvideJWTManager(config)
 	tokenStore := ProvideTokenStore(cacheClient)
-	authService := ProvideAuthService(config, authClient, jwtManager, tokenStore, service)
-	goalService := ProvideGoalService()
-	handler := ProvideHandler(service, authService, goalService, logger)
+	auth_usecaseService := ProvideAuthService(config, authClient, jwtManager, tokenStore, service)
+	goal_usecaseService := ProvideGoalService()
+	handler := ProvideHandler(service, auth_usecaseService, goal_usecaseService, logger)
 	authMiddleware := ProvideAuthMiddleware(jwtManager, logger)
 	router := ProvideRouter(handler, authMiddleware, config)
 	server := ProvideServer(router, config, logger)

@@ -6,7 +6,6 @@ import (
 
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/infrastructure/persistence/redis"
-	"github.com/Financial-Partner/server/internal/infrastructure/persistence/redis/mocks"
 	goredis "github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -18,7 +17,7 @@ func TestUserStore(t *testing.T) {
 	defer ctrl.Finish()
 
 	t.Run("GetUserSuccess", func(t *testing.T) {
-		mockRedisClient := mocks.NewMockRedisClient(ctrl)
+		mockRedisClient := redis.NewMockRedisClient(ctrl)
 		userStore := redis.NewUserStore(mockRedisClient)
 
 		mockRedisClient.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
@@ -29,7 +28,7 @@ func TestUserStore(t *testing.T) {
 	})
 
 	t.Run("GetUserNotFound", func(t *testing.T) {
-		mockRedisClient := mocks.NewMockRedisClient(ctrl)
+		mockRedisClient := redis.NewMockRedisClient(ctrl)
 		userStore := redis.NewUserStore(mockRedisClient)
 
 		mockRedisClient.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).Return(goredis.Nil)
@@ -40,7 +39,7 @@ func TestUserStore(t *testing.T) {
 	})
 
 	t.Run("SetUserSuccess", func(t *testing.T) {
-		mockRedisClient := mocks.NewMockRedisClient(ctrl)
+		mockRedisClient := redis.NewMockRedisClient(ctrl)
 		userStore := redis.NewUserStore(mockRedisClient)
 
 		mockRedisClient.EXPECT().Set(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(nil)
@@ -53,7 +52,7 @@ func TestUserStore(t *testing.T) {
 	})
 
 	t.Run("DeleteUserSuccess", func(t *testing.T) {
-		mockRedisClient := mocks.NewMockRedisClient(ctrl)
+		mockRedisClient := redis.NewMockRedisClient(ctrl)
 		userStore := redis.NewUserStore(mockRedisClient)
 
 		mockRedisClient.EXPECT().Delete(gomock.Any(), gomock.Any()).Return(nil)

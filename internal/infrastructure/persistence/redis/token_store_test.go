@@ -10,14 +10,13 @@ import (
 	"go.uber.org/mock/gomock"
 
 	"github.com/Financial-Partner/server/internal/infrastructure/persistence/redis"
-	"github.com/Financial-Partner/server/internal/infrastructure/persistence/redis/mocks"
 )
 
 func TestTokenStore(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRedisClient := mocks.NewMockRedisClient(ctrl)
+	mockRedisClient := redis.NewMockRedisClient(ctrl)
 	tokenStore := redis.NewTokenStore(mockRedisClient)
 
 	testEmail := "test@example.com"

@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-//go:generate mockgen -source=redis.go -destination=mocks/redis_mock.go -package=mocks
+//go:generate mockgen -source=redis.go -destination=redis_mock.go -package=redis
 
 type RedisClient interface {
 	Get(ctx context.Context, key string, dest interface{}) error
