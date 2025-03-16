@@ -34,7 +34,7 @@ type GoalService interface {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /goals/suggestion [post]
 func (h *Handler) GetGoalSuggestion(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(contextutil.UserEmailKey).(string)
+	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
 		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
@@ -75,7 +75,7 @@ func (h *Handler) GetGoalSuggestion(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /goals/suggestion/me [get]
 func (h *Handler) GetAutoGoalSuggestion(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(contextutil.UserEmailKey).(string)
+	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
 		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
@@ -111,7 +111,7 @@ func (h *Handler) GetAutoGoalSuggestion(w http.ResponseWriter, r *http.Request) 
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /goals [post]
 func (h *Handler) CreateGoal(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(contextutil.UserEmailKey).(string)
+	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
 		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
@@ -155,7 +155,7 @@ func (h *Handler) CreateGoal(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /goals [get]
 func (h *Handler) GetGoal(w http.ResponseWriter, r *http.Request) {
-	userID, ok := r.Context().Value(contextutil.UserEmailKey).(string)
+	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
 		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)

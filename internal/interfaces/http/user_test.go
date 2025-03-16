@@ -20,133 +20,6 @@ import (
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
 )
 
-func TestCreateUser(t *testing.T) {
-
-	t.Run("Invalid request format", func(t *testing.T) {
-		h, _ := newTestHandler(t)
-
-		invalidBody := bytes.NewBufferString(`{invalid json`)
-		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/users", invalidBody)
-
-		h.CreateUser(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
-		assert.Equal(t, "application/json", w.Header().Get("Content-Type"))
-
-		var errorResp dto.ErrorResponse
-		err := json.NewDecoder(w.Body).Decode(&errorResp)
-		assert.NoError(t, err)
-		assert.Equal(t, http.StatusBadRequest, errorResp.Code)
-		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
-	})
-
-	t.Run("Email mismatch", func(t *testing.T) {
-		h, _ := newTestHandler(t)
-
-		createReq := dto.CreateUserRequest{
-			Email: "user@example.com",
-			Name:  "Test User",
-		}
-		body, _ := json.Marshal(createReq)
-
-		ctx := context.Background()
-		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "different@example.com")
-
-		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/users", bytes.NewBuffer(body)).WithContext(ctx)
-
-		h.CreateUser(w, r)
-
-		assert.Equal(t, http.StatusUnauthorized, w.Code)
-		assert.Equal(t, "application/json", w.Header().Get("Content-Type"))
-
-		var errorResp dto.ErrorResponse
-		err := json.NewDecoder(w.Body).Decode(&errorResp)
-		assert.NoError(t, err)
-		assert.Equal(t, http.StatusUnauthorized, errorResp.Code)
-		assert.Equal(t, httperror.ErrEmailMismatch, errorResp.Message)
-	})
-
-	t.Run("Create user failed", func(t *testing.T) {
-		h, mockServices := newTestHandler(t)
-
-		mockServices.UserService.EXPECT().
-			GetOrCreateUser(gomock.Any(), "user@example.com", "Test User").
-			Return(nil, errors.New("failed to create user"))
-
-		createReq := dto.CreateUserRequest{
-			Email: "user@example.com",
-			Name:  "Test User",
-		}
-		body, _ := json.Marshal(createReq)
-
-		ctx := context.Background()
-		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
-
-		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/users", bytes.NewBuffer(body)).WithContext(ctx)
-
-		h.CreateUser(w, r)
-
-		assert.Equal(t, http.StatusInternalServerError, w.Code)
-		assert.Equal(t, "application/json", w.Header().Get("Content-Type"))
-
-		var errorResp dto.ErrorResponse
-		err := json.NewDecoder(w.Body).Decode(&errorResp)
-		assert.NoError(t, err)
-		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, httperror.ErrFailedToCreateUser, errorResp.Message)
-	})
-
-	t.Run("Create user successful", func(t *testing.T) {
-		h, mockServices := newTestHandler(t)
-
-		objectID := primitive.NewObjectID()
-		testUser := &entities.User{
-			ID:    objectID,
-			Email: "user@example.com",
-			Name:  "Test User",
-			Wallet: entities.Wallet{
-				Diamonds: 100,
-				Savings:  0,
-			},
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		}
-
-		mockServices.UserService.EXPECT().
-			GetOrCreateUser(gomock.Any(), "user@example.com", "Test User").
-			Return(testUser, nil)
-
-		createReq := dto.CreateUserRequest{
-			Email: "user@example.com",
-			Name:  "Test User",
-		}
-		body, _ := json.Marshal(createReq)
-
-		ctx := context.Background()
-		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
-
-		w := httptest.NewRecorder()
-		r := httptest.NewRequest("POST", "/users", bytes.NewBuffer(body)).WithContext(ctx)
-
-		h.CreateUser(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-		assert.Equal(t, "application/json", w.Header().Get("Content-Type"))
-
-		var response dto.CreateUserResponse
-		err := json.NewDecoder(w.Body).Decode(&response)
-		assert.NoError(t, err)
-		assert.Equal(t, testUser.ID.Hex(), response.ID)
-		assert.Equal(t, testUser.Email, response.Email)
-		assert.Equal(t, testUser.Name, response.Name)
-		assert.Equal(t, testUser.Wallet.Diamonds, response.Diamonds)
-		assert.Equal(t, testUser.Wallet.Savings, response.Savings)
-	})
-}
-
 func TestUpdateUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -170,7 +43,7 @@ func TestUpdateUser(t *testing.T) {
 		assert.Equal(t, httperror.ErrInvalidRequest, errorResp.Message)
 	})
 
-	t.Run("Email not in context", func(t *testing.T) {
+	t.Run("UserID not in context", func(t *testing.T) {
 		h, _ := newTestHandler(t)
 
 		updateReq := dto.UpdateUserRequest{
@@ -190,14 +63,16 @@ func TestUpdateUser(t *testing.T) {
 		err := json.NewDecoder(w.Body).Decode(&errorResp)
 		assert.NoError(t, err)
 		assert.Equal(t, http.StatusInternalServerError, errorResp.Code)
-		assert.Equal(t, httperror.ErrEmailNotFound, errorResp.Message)
+		assert.Equal(t, httperror.ErrUserIDNotFound, errorResp.Message)
 	})
 
 	t.Run("Update user failed", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		objectID := primitive.NewObjectID()
+
 		mockServices.UserService.EXPECT().
-			UpdateUserName(gomock.Any(), "user@example.com", "New Name").
+			UpdateUserName(gomock.Any(), objectID.Hex(), "New Name").
 			Return(nil, errors.New("update failed"))
 
 		updateReq := dto.UpdateUserRequest{
@@ -206,7 +81,7 @@ func TestUpdateUser(t *testing.T) {
 		body, _ := json.Marshal(updateReq)
 
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
+		ctx = context.WithValue(ctx, contextutil.UserIDKey, objectID.Hex())
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("PUT", "/users/me", bytes.NewBuffer(body)).WithContext(ctx)
@@ -240,7 +115,7 @@ func TestUpdateUser(t *testing.T) {
 		}
 
 		mockServices.UserService.EXPECT().
-			UpdateUserName(gomock.Any(), "user@example.com", "New Name").
+			UpdateUserName(gomock.Any(), objectID.Hex(), "New Name").
 			Return(testUser, nil)
 
 		updateReq := dto.UpdateUserRequest{
@@ -249,7 +124,7 @@ func TestUpdateUser(t *testing.T) {
 		body, _ := json.Marshal(updateReq)
 
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, contextutil.UserEmailKey, "user@example.com")
+		ctx = context.WithValue(ctx, contextutil.UserIDKey, objectID.Hex())
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("PUT", "/users/me", bytes.NewBuffer(body)).WithContext(ctx)

@@ -88,7 +88,7 @@ func (s *Service) GetOrCreateUser(ctx context.Context, email, name string) (*ent
 	return entity, nil
 }
 
-func (s *Service) UpdateUserName(ctx context.Context, email, name string) (*entities.User, error) {
+func (s *Service) UpdateUserName(ctx context.Context, id, name string) (*entities.User, error) {
 	return nil, nil
 }
 

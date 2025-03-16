@@ -24,39 +24,6 @@ definitions:
     - period
     - target_amount
     type: object
-  dto.CreateUserRequest:
-    properties:
-      email:
-        example: user@example.com
-        type: string
-      name:
-        example: New User Name
-        type: string
-    required:
-    - email
-    - name
-    type: object
-  dto.CreateUserResponse:
-    properties:
-      created_at:
-        example: "2025-03-07T12:00:00Z"
-        type: string
-      diamonds:
-        example: 100
-        type: integer
-      email:
-        example: user@example.com
-        type: string
-      id:
-        example: 60d6ec33f777b123e4567890
-        type: string
-      name:
-        example: User Name
-        type: string
-      savings:
-        example: 0
-        type: integer
-    type: object
   dto.ErrorResponse:
     properties:
       code:
@@ -513,47 +480,6 @@ paths:
         data
       tags:
       - goals
-  /users:
-    post:
-      consumes:
-      - application/json
-      description: Create a new user when first login
-      parameters:
-      - description: Bearer {token}
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: Create user request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateUserRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Create user successfully
-          schema:
-            $ref: '#/definitions/dto.CreateUserResponse'
-        "400":
-          description: Invalid request format
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/dto.ErrorResponse'
-      security:
-      - BearerAuth: []
-      summary: CreateUser
-      tags:
-      - users
   /users/me:
     get:
       consumes:

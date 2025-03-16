@@ -15,6 +15,7 @@ import (
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/mock/gomock"
 )
 
@@ -26,7 +27,9 @@ func TestGetGoalSuggestion(t *testing.T) {
 		h, _ := newTestHandler(t)
 
 		invalidBody := bytes.NewBufferString(`{invalid json`)
-		ctx := context.WithValue(context.Background(), contextutil.UserEmailKey, "test@example.com")
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+		ctx := newContext(userID, userEmail)
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("POST", "/goals/suggestion", invalidBody)
 		r = r.WithContext(ctx)
@@ -72,9 +75,11 @@ func TestGetGoalSuggestion(t *testing.T) {
 
 	t.Run("Service error", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
 
 		mockServices.GoalService.EXPECT().
-			GetGoalSuggestion(gomock.Any(), "test@example.com", gomock.Any()).
+			GetGoalSuggestion(gomock.Any(), userID, gomock.Any()).
 			Return(nil, errors.New("service error"))
 
 		req := dto.GoalSuggestionRequest{
@@ -88,7 +93,7 @@ func TestGetGoalSuggestion(t *testing.T) {
 		body, _ := json.Marshal(req)
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("POST", "/goals/suggestion", bytes.NewBuffer(body))
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetGoalSuggestion(w, r)
@@ -106,6 +111,9 @@ func TestGetGoalSuggestion(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		suggestion := &entities.GoalSuggestion{
 			SuggestedAmount: 15000,
 			Period:          30,
@@ -113,7 +121,7 @@ func TestGetGoalSuggestion(t *testing.T) {
 		}
 
 		mockServices.GoalService.EXPECT().
-			GetGoalSuggestion(gomock.Any(), "test@example.com", gomock.Any()).
+			GetGoalSuggestion(gomock.Any(), userID, gomock.Any()).
 			Return(suggestion, nil)
 
 		req := dto.GoalSuggestionRequest{
@@ -127,7 +135,7 @@ func TestGetGoalSuggestion(t *testing.T) {
 		body, _ := json.Marshal(req)
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("POST", "/goals/suggestion", bytes.NewBuffer(body))
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetGoalSuggestion(w, r)
@@ -169,13 +177,16 @@ func TestGetAutoGoalSuggestion(t *testing.T) {
 	t.Run("Service error", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		mockServices.GoalService.EXPECT().
-			GetAutoGoalSuggestion(gomock.Any(), "test@example.com").
+			GetAutoGoalSuggestion(gomock.Any(), userID).
 			Return(nil, errors.New("service error"))
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/goals/suggestion/me", nil)
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetAutoGoalSuggestion(w, r)
@@ -193,6 +204,9 @@ func TestGetAutoGoalSuggestion(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		suggestion := &entities.GoalSuggestion{
 			SuggestedAmount: 15000,
 			Period:          30,
@@ -200,12 +214,12 @@ func TestGetAutoGoalSuggestion(t *testing.T) {
 		}
 
 		mockServices.GoalService.EXPECT().
-			GetAutoGoalSuggestion(gomock.Any(), "test@example.com").
+			GetAutoGoalSuggestion(gomock.Any(), userID).
 			Return(suggestion, nil)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/goals/suggestion/me", nil)
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetAutoGoalSuggestion(w, r)
@@ -230,7 +244,9 @@ func TestCreateGoal(t *testing.T) {
 		h, _ := newTestHandler(t)
 
 		invalidBody := bytes.NewBufferString(`{invalid json`)
+		userID := primitive.NewObjectID().Hex()
 		ctx := context.WithValue(context.Background(), contextutil.UserEmailKey, "test@example.com")
+		ctx = context.WithValue(ctx, contextutil.UserIDKey, userID)
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("POST", "/goals", invalidBody)
 		r = r.WithContext(ctx)
@@ -273,8 +289,11 @@ func TestCreateGoal(t *testing.T) {
 	t.Run("Service error", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		mockServices.GoalService.EXPECT().
-			CreateGoal(gomock.Any(), "test@example.com", gomock.Any()).
+			CreateGoal(gomock.Any(), userID, gomock.Any()).
 			Return(nil, errors.New("service error"))
 
 		req := dto.CreateGoalRequest{
@@ -284,7 +303,7 @@ func TestCreateGoal(t *testing.T) {
 		body, _ := json.Marshal(req)
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("POST", "/goals", bytes.NewBuffer(body))
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.CreateGoal(w, r)
@@ -302,10 +321,13 @@ func TestCreateGoal(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		now := time.Now()
 		goal := &entities.Goal{
 			ID:            "goal_123456",
-			UserID:        "test@example.com",
+			UserID:        userID,
 			TargetAmount:  10000,
 			CurrentAmount: 0,
 			Period:        30,
@@ -315,7 +337,7 @@ func TestCreateGoal(t *testing.T) {
 		}
 
 		mockServices.GoalService.EXPECT().
-			CreateGoal(gomock.Any(), "test@example.com", gomock.Any()).
+			CreateGoal(gomock.Any(), userID, gomock.Any()).
 			Return(goal, nil)
 
 		req := dto.CreateGoalRequest{
@@ -325,7 +347,7 @@ func TestCreateGoal(t *testing.T) {
 		body, _ := json.Marshal(req)
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("POST", "/goals", bytes.NewBuffer(body))
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.CreateGoal(w, r)
@@ -370,13 +392,16 @@ func TestGetGoal(t *testing.T) {
 	t.Run("Service error", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		mockServices.GoalService.EXPECT().
-			GetGoal(gomock.Any(), "test@example.com").
+			GetGoal(gomock.Any(), userID).
 			Return(nil, errors.New("service error"))
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/goals", nil)
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetGoal(w, r)
@@ -394,10 +419,13 @@ func TestGetGoal(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		now := time.Now()
 		goal := &entities.Goal{
 			ID:            "goal_123456",
-			UserID:        "test@example.com",
+			UserID:        userID,
 			TargetAmount:  10000,
 			CurrentAmount: 5000,
 			Period:        30,
@@ -407,12 +435,12 @@ func TestGetGoal(t *testing.T) {
 		}
 
 		mockServices.GoalService.EXPECT().
-			GetGoal(gomock.Any(), "test@example.com").
+			GetGoal(gomock.Any(), userID).
 			Return(goal, nil)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/goals", nil)
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetGoal(w, r)

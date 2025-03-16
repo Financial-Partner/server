@@ -4,6 +4,7 @@ const (
 	ErrInvalidRequest            = "Invalid request format"
 	ErrUnauthorized              = "Unauthorized"
 	ErrEmailNotFound             = "Email not found"
+	ErrUserIDNotFound            = "User ID not found"
 	ErrEmailMismatch             = "Email mismatch"
 	ErrInternalServer            = "Internal server error"
 	ErrUserNotFound              = "User not found"
