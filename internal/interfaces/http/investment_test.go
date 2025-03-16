@@ -1,7 +1,6 @@
 package handler_test
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -9,11 +8,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Financial-Partner/server/internal/contextutil"
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
 	"github.com/stretchr/testify/assert"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/mock/gomock"
 )
 
@@ -42,13 +41,16 @@ func TestGetInvestments(t *testing.T) {
 	t.Run("Service error", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
+
 		mockServices.InvestmentService.EXPECT().
-			GetInvestments(gomock.Any(), "test@example.com").
+			GetInvestments(gomock.Any(), userID).
 			Return(nil, errors.New("service error"))
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/investments", nil)
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetInvestments(w, r)
@@ -67,10 +69,12 @@ func TestGetInvestments(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
 		now := time.Now()
+		userID := primitive.NewObjectID().Hex()
+		userEmail := "test@example.com"
 		investments := []entities.Investment{
 			{
 				ID:          "investment_123456",
-				UserID:      "test@example.com",
+				UserID:      userID,
 				Title:       "Test investments",
 				Description: "Test description",
 				Tags:        []string{"test", "investments"},
@@ -84,12 +88,12 @@ func TestGetInvestments(t *testing.T) {
 		}
 
 		mockServices.InvestmentService.EXPECT().
-			GetInvestments(gomock.Any(), "test@example.com").
+			GetInvestments(gomock.Any(), userID).
 			Return(investments, nil)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/investments", nil)
-		ctx := context.WithValue(r.Context(), contextutil.UserEmailKey, "test@example.com")
+		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetInvestments(w, r)
