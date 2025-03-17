@@ -39,7 +39,7 @@ func InitializeServer(cfgFile string) (*Server, error) {
 	goal_usecaseService := ProvideGoalService()
 	investment_usecaseService := ProvideInvestmentService()
 	handler := ProvideHandler(service, auth_usecaseService, goal_usecaseService, investment_usecaseService, logger)
-	authMiddleware := ProvideAuthMiddleware(jwtManager, logger)
+	authMiddleware := ProvideAuthMiddleware(jwtManager, config, logger)
 	router := ProvideRouter(handler, authMiddleware, config)
 	server := ProvideServer(router, config, logger)
 	return server, nil

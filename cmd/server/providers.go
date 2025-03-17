@@ -91,7 +91,10 @@ func ProvideHandler(
 	return handler.NewHandler(userService, authService, goalService, investmentService, log)
 }
 
-func ProvideAuthMiddleware(jwtManager *authInfra.JWTManager, log loggerInfra.Logger) *middleware.AuthMiddleware {
+func ProvideAuthMiddleware(jwtManager *authInfra.JWTManager, cfg *config.Config, log loggerInfra.Logger) *middleware.AuthMiddleware {
+if cfg.Firebase.BypassEnabled {
+		return middleware.NewAuthMiddleware(authInfra.NewDummyJWTValidator(cfg), log)
+	}
 	return middleware.NewAuthMiddleware(jwtManager, log)
 }
 
