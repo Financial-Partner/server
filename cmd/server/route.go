@@ -54,4 +54,7 @@ func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	goalRoutes.HandleFunc("", handlers.GetGoal).Methods(http.MethodGet)
 	goalRoutes.HandleFunc("/suggestion", handlers.GetGoalSuggestion).Methods(http.MethodPost)
 	goalRoutes.HandleFunc("/suggestion/me", handlers.GetAutoGoalSuggestion).Methods(http.MethodGet)
+
+	investmentRoutes := router.PathPrefix("/investments").Subrouter()
+	investmentRoutes.HandleFunc("", handlers.GetInvestments).Methods(http.MethodGet)
 }

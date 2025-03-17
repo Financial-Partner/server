@@ -4,16 +4,18 @@ import (
 	"context"
 	"testing"
 
+	"go.uber.org/mock/gomock"
+
 	"github.com/Financial-Partner/server/internal/contextutil"
 	"github.com/Financial-Partner/server/internal/infrastructure/logger"
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
-	"go.uber.org/mock/gomock"
 )
 
 type MockServices struct {
-	UserService *handler.MockUserService
-	AuthService *handler.MockAuthService
-	GoalService *handler.MockGoalService
+	UserService       *handler.MockUserService
+	AuthService       *handler.MockAuthService
+	GoalService       *handler.MockGoalService
+	InvestmentService *handler.MockInvestmentService
 }
 
 func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
@@ -21,11 +23,12 @@ func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
 	defer ctrl.Finish()
 
 	ms := &MockServices{
-		UserService: handler.NewMockUserService(ctrl),
-		AuthService: handler.NewMockAuthService(ctrl),
-		GoalService: handler.NewMockGoalService(ctrl),
+		UserService:       handler.NewMockUserService(ctrl),
+		AuthService:       handler.NewMockAuthService(ctrl),
+		GoalService:       handler.NewMockGoalService(ctrl),
+		InvestmentService: handler.NewMockInvestmentService(ctrl),
 	}
-	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, logger.NewNopLogger())
+	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, ms.InvestmentService, logger.NewNopLogger())
 
 	return h, ms
 }

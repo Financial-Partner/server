@@ -17,4 +17,5 @@ const (
 	ErrFailedToCreateGoal        = "Failed to create goal"
 	ErrFailedToUpdateGoal        = "Failed to update goal"
 	ErrFailedToGetGoal           = "Failed to get goal"
+	ErrFailedToGetInvestments    = "Failed to get investments"
 )

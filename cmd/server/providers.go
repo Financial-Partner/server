@@ -17,6 +17,7 @@ import (
 	"github.com/Financial-Partner/server/internal/interfaces/http/middleware"
 	auth_usecase "github.com/Financial-Partner/server/internal/module/auth/usecase"
 	goal_usecase "github.com/Financial-Partner/server/internal/module/goal/usecase"
+	investment_usecase "github.com/Financial-Partner/server/internal/module/investment/usecase"
 	user_repository "github.com/Financial-Partner/server/internal/module/user/repository"
 	user_usecase "github.com/Financial-Partner/server/internal/module/user/usecase"
 	"github.com/gorilla/mux"
@@ -76,13 +77,18 @@ func ProvideGoalService() *goal_usecase.Service {
 	return goal_usecase.NewService()
 }
 
+func ProvideInvestmentService() *investment_usecase.Service {
+	return investment_usecase.NewService()
+}
+
 func ProvideHandler(
 	userService *user_usecase.Service,
 	authService *auth_usecase.Service,
 	goalService *goal_usecase.Service,
+	investmentService *investment_usecase.Service,
 	log loggerInfra.Logger,
 ) *handler.Handler {
-	return handler.NewHandler(userService, authService, goalService, log)
+	return handler.NewHandler(userService, authService, goalService, investmentService, log)
 }
 
 func ProvideAuthMiddleware(jwtManager *authInfra.JWTManager, log loggerInfra.Logger) *middleware.AuthMiddleware {
