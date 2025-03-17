@@ -15,8 +15,11 @@ func SetupRoutes(
 	router *mux.Router,
 	handlers *handler.Handler,
 	authMiddleware *middleware.AuthMiddleware,
+	loggerMiddleware *middleware.LoggerMiddleware,
 	apiBaseURL url.URL,
 ) {
+	router.Use(loggerMiddleware.LogRequest)
+
 	router.PathPrefix("/swagger/").Handler(httpSwagger.Handler(
 		httpSwagger.URL(apiBaseURL.String()+"/swagger/doc.json"),
 		httpSwagger.DeepLinking(true),
@@ -42,6 +45,7 @@ func setupPublicRoutes(router *mux.Router, handlers *handler.Handler) {
 	authRoutes := router.PathPrefix("/auth").Subrouter()
 	authRoutes.HandleFunc("/login", handlers.Login).Methods(http.MethodPost)
 	authRoutes.HandleFunc("/refresh", handlers.RefreshToken).Methods(http.MethodPost)
+	authRoutes.HandleFunc("/logout", handlers.Logout).Methods(http.MethodPost)
 }
 
 func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {

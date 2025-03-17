@@ -92,15 +92,20 @@ func ProvideHandler(
 }
 
 func ProvideAuthMiddleware(jwtManager *authInfra.JWTManager, cfg *config.Config, log loggerInfra.Logger) *middleware.AuthMiddleware {
-if cfg.Firebase.BypassEnabled {
+	if cfg.Firebase.BypassEnabled {
 		return middleware.NewAuthMiddleware(authInfra.NewDummyJWTValidator(cfg), log)
 	}
 	return middleware.NewAuthMiddleware(jwtManager, log)
 }
 
+func ProvideLoggerMiddleware(log loggerInfra.Logger) *middleware.LoggerMiddleware {
+	return middleware.NewLoggerMiddleware(log)
+}
+
 func ProvideRouter(
 	h *handler.Handler,
 	authMiddleware *middleware.AuthMiddleware,
+	loggerMiddleware *middleware.LoggerMiddleware,
 	cfg *config.Config,
 ) *mux.Router {
 	router := mux.NewRouter()
@@ -109,7 +114,7 @@ func ProvideRouter(
 		Host:   cfg.Server.Host + ":" + cfg.Server.Port,
 	}
 
-	SetupRoutes(router, h, authMiddleware, apiBaseURL)
+	SetupRoutes(router, h, authMiddleware, loggerMiddleware, apiBaseURL)
 	return router
 }
 
