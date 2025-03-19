@@ -79,6 +79,10 @@ func (s *Service) LoginWithFirebase(ctx context.Context, firebaseToken string) (
 }
 
 func (s *Service) RefreshToken(ctx context.Context, refreshToken string) (newAccessToken, newRefreshToken string, expiresIn int, err error) {
+	if s.cfg.Firebase.BypassEnabled && refreshToken == s.cfg.Firebase.BypassRefreshToken {
+		return s.cfg.Firebase.BypassToken, s.cfg.Firebase.BypassRefreshToken, 0, nil
+	}
+
 	claims, err := s.jwtManager.ValidateToken(refreshToken)
 	if err != nil {
 		return "", "", 0, fmt.Errorf("invalid refresh token: %w", err)

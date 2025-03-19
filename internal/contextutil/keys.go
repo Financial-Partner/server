@@ -9,6 +9,7 @@ type ContextKey string
 const (
 	UserIDKey    ContextKey = "user_id"
 	UserEmailKey ContextKey = "user_email"
+	RequestIDKey ContextKey = "request_id"
 )
 
 func GetUserID(ctx context.Context) (string, bool) {
