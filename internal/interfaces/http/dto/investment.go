@@ -27,7 +27,6 @@ type GetOpportunitiesResponse struct {
 }
 
 type CreateUserInvestmentRequest struct {
-	UserID        string `json:"user_id" example:"60d6ec33f777b123e4567890" binding:"required"`
 	OpportunityID string `json:"opportunity_id" example:"60d6ec33f777b123e4567890" binding:"required"`
 	Amount        int64  `json:"amount" example:"1000" binding:"required"`
 }

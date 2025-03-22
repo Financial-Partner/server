@@ -669,8 +669,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "amount",
-                "opportunity_id",
-                "user_id"
+                "opportunity_id"
             ],
             "properties": {
                 "amount": {
@@ -678,10 +677,6 @@ const docTemplate = `{
                     "example": 1000
                 },
                 "opportunity_id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
-                },
-                "user_id": {
                     "type": "string",
                     "example": "60d6ec33f777b123e4567890"
                 }
