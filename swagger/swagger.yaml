@@ -24,6 +24,27 @@ definitions:
     - period
     - target_amount
     type: object
+  dto.CreateUserInvestmentRequest:
+    properties:
+      amount:
+        example: 1000
+        type: integer
+      opportunity_id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+      user_id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+    required:
+    - amount
+    - opportunity_id
+    - user_id
+    type: object
+  dto.CreateUserInvestmentResponse:
+    properties:
+      investment:
+        $ref: '#/definitions/dto.InvestmentResponse'
+    type: object
   dto.ErrorResponse:
     properties:
       code:
@@ -36,7 +57,14 @@ definitions:
       goal:
         $ref: '#/definitions/dto.GoalResponse'
     type: object
-  dto.GetInvestmentsResponse:
+  dto.GetOpportunitiesResponse:
+    properties:
+      opportunities:
+        items:
+          $ref: '#/definitions/dto.OpportunityResponse'
+        type: array
+    type: object
+  dto.GetUserInvestmentsResponse:
     properties:
       investments:
         items:
@@ -129,37 +157,24 @@ definitions:
     type: object
   dto.InvestmentResponse:
     properties:
+      amount:
+        example: 1000
+        type: integer
       created_at:
         example: "2023-01-01T00:00:00Z"
         type: string
-      description:
-        example: Investment in stock market is a good way to make money
+      id:
+        example: 60d6ec33f777b123e4567890
         type: string
-      duration:
-        example: a month
-        type: string
-      is_increase:
-        example: true
-        type: boolean
-      min_amount:
-        example: 1000
-        type: integer
-      tags:
-        example:
-        - stock
-        - ' market'
-        items:
-          type: string
-        type: array
-      title:
-        example: Investment in stock market
+      opportunity_id:
+        example: 60d6ec33f777b123e4567890
         type: string
       updated_at:
         example: "2023-06-01T00:00:00Z"
         type: string
-      variation:
-        example: 20
-        type: integer
+      user_id:
+        example: 60d6ec33f777b123e4567890
+        type: string
     type: object
   dto.LoginRequest:
     properties:
@@ -202,6 +217,43 @@ definitions:
       success:
         example: true
         type: boolean
+    type: object
+  dto.OpportunityResponse:
+    properties:
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      description:
+        example: Investment in stock market is a good way to make money
+        type: string
+      duration:
+        example: a month
+        type: string
+      id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+      is_increase:
+        example: true
+        type: boolean
+      min_amount:
+        example: 1000
+        type: integer
+      tags:
+        example:
+        - stock
+        - ' market'
+        items:
+          type: string
+        type: array
+      title:
+        example: Investment in stock market
+        type: string
+      updated_at:
+        example: "2023-06-01T00:00:00Z"
+        type: string
+      variation:
+        example: 20
+        type: integer
     type: object
   dto.RefreshTokenRequest:
     properties:
@@ -525,7 +577,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get investments for a user
+      description: Get investment opportunities for a user
       parameters:
       - description: Bearer {token}
         in: header
@@ -538,7 +590,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.GetInvestmentsResponse'
+            $ref: '#/definitions/dto.GetOpportunitiesResponse'
         "401":
           description: Unauthorized
           schema:
@@ -547,7 +599,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
-      summary: Get investments
+      summary: Get investment opportunities
       tags:
       - investments
   /users/me:
@@ -630,4 +682,71 @@ paths:
       summary: UpdateUser
       tags:
       - users
+  /users/me/investments:
+    get:
+      consumes:
+      - application/json
+      description: Get user investments
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetUserInvestmentsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get user investments
+      tags:
+      - investments
+    post:
+      consumes:
+      - application/json
+      description: Create investment for a user
+      parameters:
+      - description: Create user investment request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserInvestmentRequest'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateUserInvestmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create user investment
+      tags:
+      - investments
 swagger: "2.0"

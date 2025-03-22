@@ -48,6 +48,8 @@ func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	userRoutes := router.PathPrefix("/users").Subrouter()
 	userRoutes.HandleFunc("/me", handlers.GetUser).Methods(http.MethodGet)
 	userRoutes.HandleFunc("/me", handlers.UpdateUser).Methods(http.MethodPut)
+	userRoutes.HandleFunc("/me/investments", handlers.CreateUserInvestment).Methods(http.MethodPost)
+	userRoutes.HandleFunc("/me/investments", handlers.GetUserInvestments).Methods(http.MethodGet)
 
 	goalRoutes := router.PathPrefix("/goals").Subrouter()
 	goalRoutes.HandleFunc("", handlers.CreateGoal).Methods(http.MethodPost)
@@ -56,5 +58,5 @@ func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	goalRoutes.HandleFunc("/suggestion/me", handlers.GetAutoGoalSuggestion).Methods(http.MethodGet)
 
 	investmentRoutes := router.PathPrefix("/investments").Subrouter()
-	investmentRoutes.HandleFunc("", handlers.GetInvestments).Methods(http.MethodGet)
+	investmentRoutes.HandleFunc("", handlers.GetOpportunities).Methods(http.MethodGet)
 }
