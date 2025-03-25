@@ -24,23 +24,6 @@ definitions:
     - period
     - target_amount
     type: object
-  dto.CreateUserInvestmentRequest:
-    properties:
-      amount:
-        example: 1000
-        type: integer
-      opportunity_id:
-        example: 60d6ec33f777b123e4567890
-        type: string
-    required:
-    - amount
-    - opportunity_id
-    type: object
-  dto.CreateUserInvestmentResponse:
-    properties:
-      investment:
-        $ref: '#/definitions/dto.InvestmentResponse'
-    type: object
   dto.ErrorResponse:
     properties:
       code:
@@ -65,6 +48,13 @@ definitions:
       investments:
         items:
           $ref: '#/definitions/dto.InvestmentResponse'
+        type: array
+    type: object
+  dto.GetTransactionsResponse:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/dto.TransactionResponse'
         type: array
     type: object
   dto.GetUserResponse:
@@ -273,6 +263,36 @@ definitions:
       token_type:
         example: Bearer
         type: string
+    type: object
+  dto.TransactionResponse:
+    properties:
+      amount:
+        example: 1000
+        type: integer
+      category:
+        example: Food
+        type: string
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      date:
+        example: "2023-01-01"
+        type: string
+      description:
+        example: Lunch
+        type: string
+      transaction_type:
+        example: Expense
+        type: string
+      updated_at:
+        example: "2023-06-01T00:00:00Z"
+        type: string
+    required:
+    - amount
+    - category
+    - date
+    - description
+    - transaction_type
     type: object
   dto.UpdateUserRequest:
     properties:
@@ -598,6 +618,73 @@ paths:
       summary: Get investment opportunities
       tags:
       - investments
+  /transactions:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions for a user
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetTransactionsResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get transactions
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Create a transaction for user
+      parameters:
+      - description: Create transaction request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTransactionRequest'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create a transaction
+      tags:
+      - transactions
   /users/me:
     get:
       consumes:

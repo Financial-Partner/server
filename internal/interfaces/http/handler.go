@@ -5,19 +5,21 @@ import (
 )
 
 type Handler struct {
-	userService       UserService
-	authService       AuthService
-	goalService       GoalService
-	investmentService InvestmentService
-	log               logger.Logger
+	userService        UserService
+	authService        AuthService
+	goalService        GoalService
+	investmentService  InvestmentService
+	transactionService TransactionService
+	log                logger.Logger
 }
 
-func NewHandler(us UserService, as AuthService, gs GoalService, is InvestmentService, log logger.Logger) *Handler {
+func NewHandler(us UserService, as AuthService, gs GoalService, is InvestmentService, ts TransactionService, log logger.Logger) *Handler {
 	return &Handler{
-		userService:       us,
-		authService:       as,
-		goalService:       gs,
-		investmentService: is,
-		log:               log,
+		userService:        us,
+		authService:        as,
+		goalService:        gs,
+		investmentService:  is,
+		transactionService: ts,
+		log:                log,
 	}
 }

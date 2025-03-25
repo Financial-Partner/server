@@ -400,6 +400,107 @@
                 }
             }
         },
+        "/transactions": {
+            "get": {
+                "description": "Get transactions for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get transactions",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetTransactionsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a transaction for user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Create a transaction",
+                "parameters": [
+                    {
+                        "description": "Create transaction request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateTransactionRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.TransactionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/me": {
             "get": {
                 "security": [
@@ -658,31 +759,6 @@
                 }
             }
         },
-        "dto.CreateUserInvestmentRequest": {
-            "type": "object",
-            "required": [
-                "amount",
-                "opportunity_id"
-            ],
-            "properties": {
-                "amount": {
-                    "type": "integer",
-                    "example": 1000
-                },
-                "opportunity_id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
-                }
-            }
-        },
-        "dto.CreateUserInvestmentResponse": {
-            "type": "object",
-            "properties": {
-                "investment": {
-                    "$ref": "#/definitions/dto.InvestmentResponse"
-                }
-            }
-        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -720,6 +796,17 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.InvestmentResponse"
+                    }
+                }
+            }
+        },
+        "dto.GetTransactionsResponse": {
+            "type": "object",
+            "properties": {
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TransactionResponse"
                     }
                 }
             }
@@ -1009,6 +1096,46 @@
                 "token_type": {
                     "type": "string",
                     "example": "Bearer"
+                }
+            }
+        },
+        "dto.TransactionResponse": {
+            "type": "object",
+            "required": [
+                "amount",
+                "category",
+                "date",
+                "description",
+                "transaction_type"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "category": {
+                    "type": "string",
+                    "example": "Food"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "date": {
+                    "type": "string",
+                    "example": "2023-01-01"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Lunch"
+                },
+                "transaction_type": {
+                    "type": "string",
+                    "example": "Expense"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-06-01T00:00:00Z"
                 }
             }
         },
