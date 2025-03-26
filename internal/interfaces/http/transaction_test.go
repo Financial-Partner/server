@@ -119,7 +119,7 @@ func TestCreateTransaction(t *testing.T) {
 			ID:          objectID,
 			Amount:      1000,
 			Description: "Lunch",
-			Date:        now,
+			Date:        time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 			Category:    "Food",
 			Type:        "expense",
 			UserID:      userID,
@@ -154,7 +154,7 @@ func TestCreateTransaction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, transaction.Amount, response.Amount)
 		assert.Equal(t, transaction.Description, response.Description)
-		assert.Equal(t, transaction.Date.Format(time.RFC3339), response.Date)
+		assert.Equal(t, transaction.Date.Format(time.DateOnly), response.Date)
 		assert.Equal(t, transaction.Category, response.Category)
 		assert.Equal(t, transaction.Type, response.Type)
 		assert.Equal(t, transaction.CreatedAt.Format(time.RFC3339), response.CreatedAt)
@@ -224,7 +224,7 @@ func TestGetTransactions(t *testing.T) {
 				ID:          objectID,
 				Amount:      1000,
 				Description: "Lunch",
-				Date:        now,
+				Date:        time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 				Category:    "Food",
 				Type:        "expense",
 				UserID:      userID,
@@ -253,7 +253,7 @@ func TestGetTransactions(t *testing.T) {
 		assert.Equal(t, len(transactions), len(response.Transactions))
 		assert.Equal(t, transactions[0].Amount, response.Transactions[0].Amount)
 		assert.Equal(t, transactions[0].Description, response.Transactions[0].Description)
-		assert.Equal(t, transactions[0].Date.Format(time.RFC3339), response.Transactions[0].Date)
+		assert.Equal(t, transactions[0].Date.Format(time.DateOnly), response.Transactions[0].Date)
 		assert.Equal(t, transactions[0].Category, response.Transactions[0].Category)
 		assert.Equal(t, transactions[0].Type, response.Transactions[0].Type)
 		assert.Equal(t, transactions[0].CreatedAt.Format(time.RFC3339), response.Transactions[0].CreatedAt)
