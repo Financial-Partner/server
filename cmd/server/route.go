@@ -65,4 +65,8 @@ func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	userInvestmentRoute := router.PathPrefix("/users/me/investment").Subrouter()
 	userInvestmentRoute.HandleFunc("/", handlers.CreateUserInvestment).Methods(http.MethodPost)
 	userInvestmentRoute.HandleFunc("/", handlers.GetUserInvestments).Methods(http.MethodGet)
+
+	transactionRoutes := router.PathPrefix("/transactions").Subrouter()
+	transactionRoutes.HandleFunc("", handlers.CreateTransaction).Methods(http.MethodPost)
+	transactionRoutes.HandleFunc("", handlers.GetTransactions).Methods(http.MethodGet)
 }

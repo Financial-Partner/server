@@ -12,10 +12,11 @@ import (
 )
 
 type MockServices struct {
-	UserService       *handler.MockUserService
-	AuthService       *handler.MockAuthService
-	GoalService       *handler.MockGoalService
-	InvestmentService *handler.MockInvestmentService
+	UserService        *handler.MockUserService
+	AuthService        *handler.MockAuthService
+	GoalService        *handler.MockGoalService
+	InvestmentService  *handler.MockInvestmentService
+	TransactionService *handler.MockTransactionService
 }
 
 func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
@@ -23,12 +24,13 @@ func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
 	defer ctrl.Finish()
 
 	ms := &MockServices{
-		UserService:       handler.NewMockUserService(ctrl),
-		AuthService:       handler.NewMockAuthService(ctrl),
-		GoalService:       handler.NewMockGoalService(ctrl),
-		InvestmentService: handler.NewMockInvestmentService(ctrl),
+		UserService:        handler.NewMockUserService(ctrl),
+		AuthService:        handler.NewMockAuthService(ctrl),
+		GoalService:        handler.NewMockGoalService(ctrl),
+		InvestmentService:  handler.NewMockInvestmentService(ctrl),
+		TransactionService: handler.NewMockTransactionService(ctrl),
 	}
-	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, ms.InvestmentService, logger.NewNopLogger())
+	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, ms.InvestmentService, ms.TransactionService, logger.NewNopLogger())
 
 	return h, ms
 }
