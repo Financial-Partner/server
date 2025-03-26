@@ -365,7 +365,7 @@ const docTemplate = `{
         },
         "/investments": {
             "get": {
-                "description": "Get investments for a user",
+                "description": "Get investment opportunities for a user",
                 "consumes": [
                     "application/json"
                 ],
@@ -375,7 +375,7 @@ const docTemplate = `{
                 "tags": [
                     "investments"
                 ],
-                "summary": "Get investments",
+                "summary": "Get investment opportunities",
                 "parameters": [
                     {
                         "type": "string",
@@ -389,7 +389,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.GetInvestmentsResponse"
+                            "$ref": "#/definitions/dto.GetOpportunitiesResponse"
                         }
                     },
                     "401": {
@@ -527,6 +527,107 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users/me/investments": {
+            "get": {
+                "description": "Get user investments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "investments"
+                ],
+                "summary": "Get user investments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetUserInvestmentsResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create investment for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "investments"
+                ],
+                "summary": "Create user investment",
+                "parameters": [
+                    {
+                        "description": "Create user investment request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateUserInvestmentRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateUserInvestmentResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -564,6 +665,31 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateUserInvestmentRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "opportunity_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "opportunity_id": {
+                    "type": "string",
+                    "example": "60d6ec33f777b123e4567890"
+                }
+            }
+        },
+        "dto.CreateUserInvestmentResponse": {
+            "type": "object",
+            "properties": {
+                "investment": {
+                    "$ref": "#/definitions/dto.InvestmentResponse"
+                }
+            }
+        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -583,7 +709,18 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.GetInvestmentsResponse": {
+        "dto.GetOpportunitiesResponse": {
+            "type": "object",
+            "properties": {
+                "opportunities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.OpportunityResponse"
+                    }
+                }
+            }
+        },
+        "dto.GetUserInvestmentsResponse": {
             "type": "object",
             "properties": {
                 "investments": {
@@ -711,47 +848,29 @@ const docTemplate = `{
         "dto.InvestmentResponse": {
             "type": "object",
             "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
                 "created_at": {
                     "type": "string",
                     "example": "2023-01-01T00:00:00Z"
                 },
-                "description": {
+                "id": {
                     "type": "string",
-                    "example": "Investment in stock market is a good way to make money"
+                    "example": "60d6ec33f777b123e4567890"
                 },
-                "duration": {
+                "opportunity_id": {
                     "type": "string",
-                    "example": "a month"
-                },
-                "is_increase": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "min_amount": {
-                    "type": "integer",
-                    "example": 1000
-                },
-                "tags": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "example": [
-                        "stock",
-                        " market"
-                    ]
-                },
-                "title": {
-                    "type": "string",
-                    "example": "Investment in stock market"
+                    "example": "60d6ec33f777b123e4567890"
                 },
                 "updated_at": {
                     "type": "string",
                     "example": "2023-06-01T00:00:00Z"
                 },
-                "variation": {
-                    "type": "integer",
-                    "example": 20
+                "user_id": {
+                    "type": "string",
+                    "example": "60d6ec33f777b123e4567890"
                 }
             }
         },
@@ -813,6 +932,57 @@ const docTemplate = `{
                 "success": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "dto.OpportunityResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Investment in stock market is a good way to make money"
+                },
+                "duration": {
+                    "type": "string",
+                    "example": "a month"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "60d6ec33f777b123e4567890"
+                },
+                "is_increase": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "min_amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "stock",
+                        " market"
+                    ]
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Investment in stock market"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-06-01T00:00:00Z"
+                },
+                "variation": {
+                    "type": "integer",
+                    "example": 20
                 }
             }
         },
