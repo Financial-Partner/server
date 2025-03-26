@@ -759,6 +759,63 @@
                 }
             }
         },
+        "dto.CreateTransactionRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "category",
+                "date",
+                "description",
+                "transaction_type"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "category": {
+                    "type": "string",
+                    "example": "Food"
+                },
+                "date": {
+                    "type": "string",
+                    "example": "2023-01-01"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Lunch"
+                },
+                "transaction_type": {
+                    "type": "string",
+                    "example": "Expense"
+                }
+            }
+        },
+        "dto.CreateUserInvestmentRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "opportunity_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "opportunity_id": {
+                    "type": "string",
+                    "example": "60d6ec33f777b123e4567890"
+                }
+            }
+        },
+        "dto.CreateUserInvestmentResponse": {
+            "type": "object",
+            "properties": {
+                "investment": {
+                    "$ref": "#/definitions/dto.InvestmentResponse"
+                }
+            }
+        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -789,17 +846,6 @@
                 }
             }
         },
-        "dto.GetUserInvestmentsResponse": {
-            "type": "object",
-            "properties": {
-                "investments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.InvestmentResponse"
-                    }
-                }
-            }
-        },
         "dto.GetTransactionsResponse": {
             "type": "object",
             "properties": {
@@ -807,6 +853,17 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.TransactionResponse"
+                    }
+                }
+            }
+        },
+        "dto.GetUserInvestmentsResponse": {
+            "type": "object",
+            "properties": {
+                "investments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.InvestmentResponse"
                     }
                 }
             }

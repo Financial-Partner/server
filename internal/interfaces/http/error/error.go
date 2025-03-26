@@ -20,6 +20,6 @@ const (
 	ErrFailedToGetOpportunities     = "Failed to get investment opportunities"
 	ErrFailedToCreateUserInvestment = "Failed to create an user investment"
 	ErrFailedToGetUserInvestments   = "Failed to get user investments"
-	ErrFailedToGetTransactions   = "Failed to get transactions"
-	ErrFailedToCreateTransaction = "Failed to create a transaction"
+	ErrFailedToGetTransactions      = "Failed to get transactions"
+	ErrFailedToCreateTransaction    = "Failed to create a transaction"
 )

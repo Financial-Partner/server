@@ -24,6 +24,47 @@ definitions:
     - period
     - target_amount
     type: object
+  dto.CreateTransactionRequest:
+    properties:
+      amount:
+        example: 1000
+        type: integer
+      category:
+        example: Food
+        type: string
+      date:
+        example: "2023-01-01"
+        type: string
+      description:
+        example: Lunch
+        type: string
+      transaction_type:
+        example: Expense
+        type: string
+    required:
+    - amount
+    - category
+    - date
+    - description
+    - transaction_type
+    type: object
+  dto.CreateUserInvestmentRequest:
+    properties:
+      amount:
+        example: 1000
+        type: integer
+      opportunity_id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+    required:
+    - amount
+    - opportunity_id
+    type: object
+  dto.CreateUserInvestmentResponse:
+    properties:
+      investment:
+        $ref: '#/definitions/dto.InvestmentResponse'
+    type: object
   dto.ErrorResponse:
     properties:
       code:
@@ -43,18 +84,18 @@ definitions:
           $ref: '#/definitions/dto.OpportunityResponse'
         type: array
     type: object
-  dto.GetUserInvestmentsResponse:
-    properties:
-      investments:
-        items:
-          $ref: '#/definitions/dto.InvestmentResponse'
-        type: array
-    type: object
   dto.GetTransactionsResponse:
     properties:
       transactions:
         items:
           $ref: '#/definitions/dto.TransactionResponse'
+        type: array
+    type: object
+  dto.GetUserInvestmentsResponse:
+    properties:
+      investments:
+        items:
+          $ref: '#/definitions/dto.InvestmentResponse'
         type: array
     type: object
   dto.GetUserResponse:

@@ -508,107 +508,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/transactions": {
-            "get": {
-                "description": "Get transactions for a user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transactions"
-                ],
-                "summary": "Get transactions",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer {token}",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetTransactionsResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a transaction for user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "transactions"
-                ],
-                "summary": "Create a transaction",
-                "parameters": [
-                    {
-                        "description": "Create transaction request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateTransactionRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer {token}",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.TransactionResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/users/me": {
             "get": {
                 "security": [
@@ -867,31 +766,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CreateUserInvestmentRequest": {
-            "type": "object",
-            "required": [
-                "amount",
-                "opportunity_id"
-            ],
-            "properties": {
-                "amount": {
-                    "type": "integer",
-                    "example": 1000
-                },
-                "opportunity_id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
-                }
-            }
-        },
-        "dto.CreateUserInvestmentResponse": {
-            "type": "object",
-            "properties": {
-                "investment": {
-                    "$ref": "#/definitions/dto.InvestmentResponse"
-                }
-            }
-        },
         "dto.CreateTransactionRequest": {
             "type": "object",
             "required": [
@@ -921,6 +795,31 @@ const docTemplate = `{
                 "transaction_type": {
                     "type": "string",
                     "example": "Expense"
+                }
+            }
+        },
+        "dto.CreateUserInvestmentRequest": {
+            "type": "object",
+            "required": [
+                "amount",
+                "opportunity_id"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "opportunity_id": {
+                    "type": "string",
+                    "example": "60d6ec33f777b123e4567890"
+                }
+            }
+        },
+        "dto.CreateUserInvestmentResponse": {
+            "type": "object",
+            "properties": {
+                "investment": {
+                    "$ref": "#/definitions/dto.InvestmentResponse"
                 }
             }
         },
@@ -954,17 +853,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.GetUserInvestmentsResponse": {
-            "type": "object",
-            "properties": {
-                "investments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.InvestmentResponse"
-                    }
-                }
-            }
-        },
         "dto.GetTransactionsResponse": {
             "type": "object",
             "properties": {
@@ -972,6 +860,17 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.TransactionResponse"
+                    }
+                }
+            }
+        },
+        "dto.GetUserInvestmentsResponse": {
+            "type": "object",
+            "properties": {
+                "investments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.InvestmentResponse"
                     }
                 }
             }
