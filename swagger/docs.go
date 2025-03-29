@@ -165,6 +165,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/gacha/draw": {
+            "post": {
+                "description": "Decrease user's gacha amount and return gacha result",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gacha"
+                ],
+                "summary": "Decrease user's gacha amount and return gacha result",
+                "parameters": [
+                    {
+                        "description": "Draw gacha request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DrawGachaRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GachaResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/gacha/preview": {
+            "get": {
+                "description": "Get 9 gacha images for preview",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gacha"
+                ],
+                "summary": "Get 9 gacha images for preview",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PreviewGachasResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/goals": {
             "get": {
                 "description": "Get user's current saving goal and status",
@@ -690,6 +787,18 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DrawGachaRequest": {
+            "type": "object",
+            "required": [
+                "amount"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
         "dto.ErrorResponse": {
             "type": "object",
             "properties": {
@@ -698,6 +807,19 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.GachaResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "60d6ec33f777b123e4567890"
+                },
+                "img_src": {
+                    "type": "string",
+                    "example": "https://example.com/image.png"
                 }
             }
         },
@@ -983,6 +1105,17 @@ const docTemplate = `{
                 "variation": {
                     "type": "integer",
                     "example": 20
+                }
+            }
+        },
+        "dto.PreviewGachasResponse": {
+            "type": "object",
+            "properties": {
+                "gachas": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.GachaResponse"
+                    }
                 }
             }
         },

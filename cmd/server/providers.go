@@ -16,6 +16,7 @@ import (
 	handler "github.com/Financial-Partner/server/internal/interfaces/http"
 	"github.com/Financial-Partner/server/internal/interfaces/http/middleware"
 	auth_usecase "github.com/Financial-Partner/server/internal/module/auth/usecase"
+	gacha_usecase "github.com/Financial-Partner/server/internal/module/gacha/usecase"
 	goal_usecase "github.com/Financial-Partner/server/internal/module/goal/usecase"
 	investment_usecase "github.com/Financial-Partner/server/internal/module/investment/usecase"
 	user_repository "github.com/Financial-Partner/server/internal/module/user/repository"
@@ -81,14 +82,19 @@ func ProvideInvestmentService() *investment_usecase.Service {
 	return investment_usecase.NewService()
 }
 
+func ProvideGachaService() *gacha_usecase.Service {
+	return gacha_usecase.NewService()
+}
+
 func ProvideHandler(
 	userService *user_usecase.Service,
 	authService *auth_usecase.Service,
 	goalService *goal_usecase.Service,
 	investmentService *investment_usecase.Service,
+	gachaService *gacha_usecase.Service,
 	log loggerInfra.Logger,
 ) *handler.Handler {
-	return handler.NewHandler(userService, authService, goalService, investmentService, log)
+	return handler.NewHandler(userService, authService, goalService, investmentService, gachaService, log)
 }
 
 func ProvideAuthMiddleware(jwtManager *authInfra.JWTManager, cfg *config.Config, log loggerInfra.Logger) *middleware.AuthMiddleware {

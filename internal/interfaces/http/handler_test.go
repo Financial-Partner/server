@@ -16,6 +16,7 @@ type MockServices struct {
 	AuthService       *handler.MockAuthService
 	GoalService       *handler.MockGoalService
 	InvestmentService *handler.MockInvestmentService
+	GachaService      *handler.MockGachaService
 }
 
 func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
@@ -27,8 +28,9 @@ func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
 		AuthService:       handler.NewMockAuthService(ctrl),
 		GoalService:       handler.NewMockGoalService(ctrl),
 		InvestmentService: handler.NewMockInvestmentService(ctrl),
+		GachaService:      handler.NewMockGachaService(ctrl),
 	}
-	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, ms.InvestmentService, logger.NewNopLogger())
+	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, ms.InvestmentService, ms.GachaService, logger.NewNopLogger())
 
 	return h, ms
 }

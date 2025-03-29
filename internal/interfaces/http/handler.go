@@ -9,15 +9,17 @@ type Handler struct {
 	authService       AuthService
 	goalService       GoalService
 	investmentService InvestmentService
+	gachaService      GachaService
 	log               logger.Logger
 }
 
-func NewHandler(us UserService, as AuthService, gs GoalService, is InvestmentService, log logger.Logger) *Handler {
+func NewHandler(us UserService, as AuthService, gs GoalService, is InvestmentService, gcs GachaService, log logger.Logger) *Handler {
 	return &Handler{
 		userService:       us,
 		authService:       as,
 		goalService:       gs,
 		investmentService: is,
+		gachaService:      gcs,
 		log:               log,
 	}
 }

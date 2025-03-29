@@ -20,4 +20,6 @@ const (
 	ErrFailedToGetOpportunities     = "Failed to get investment opportunities"
 	ErrFailedToCreateUserInvestment = "Failed to create an user investment"
 	ErrFailedToGetUserInvestments   = "Failed to get user investments"
+	ErrFailedToDrawGacha            = "Failed to draw a gacha"
+	ErrFailedToPreviewGachas        = "Failed to preview gachas"
 )
