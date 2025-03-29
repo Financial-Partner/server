@@ -65,11 +65,28 @@ definitions:
       investment:
         $ref: '#/definitions/dto.InvestmentResponse'
     type: object
+  dto.DrawGachaRequest:
+    properties:
+      amount:
+        example: 100
+        type: integer
+    required:
+    - amount
+    type: object
   dto.ErrorResponse:
     properties:
       code:
         type: integer
       message:
+        type: string
+    type: object
+  dto.GachaResponse:
+    properties:
+      id:
+        example: 60d6ec33f777b123e4567890
+        type: string
+      img_src:
+        example: https://example.com/image.png
         type: string
     type: object
   dto.GetGoalResponse:
@@ -281,6 +298,13 @@ definitions:
       variation:
         example: 20
         type: integer
+    type: object
+  dto.PreviewGachasResponse:
+    properties:
+      gachas:
+        items:
+          $ref: '#/definitions/dto.GachaResponse'
+        type: array
     type: object
   dto.RefreshTokenRequest:
     properties:
@@ -495,6 +519,70 @@ paths:
       summary: Refresh Access Token
       tags:
       - auth
+  /gacha/draw:
+    post:
+      consumes:
+      - application/json
+      description: Decrease user's gacha amount and return gacha result
+      parameters:
+      - description: Draw gacha request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DrawGachaRequest'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GachaResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Decrease user's gacha amount and return gacha result
+      tags:
+      - gacha
+  /gacha/preview:
+    get:
+      consumes:
+      - application/json
+      description: Get 9 gacha images for preview
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PreviewGachasResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Get 9 gacha images for preview
+      tags:
+      - gacha
   /goals:
     get:
       consumes:

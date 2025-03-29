@@ -22,4 +22,6 @@ const (
 	ErrFailedToGetUserInvestments   = "Failed to get user investments"
 	ErrFailedToGetTransactions      = "Failed to get transactions"
 	ErrFailedToCreateTransaction    = "Failed to create a transaction"
+	ErrFailedToDrawGacha            = "Failed to draw a gacha"
+	ErrFailedToPreviewGachas        = "Failed to preview gachas"
 )
