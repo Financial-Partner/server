@@ -62,11 +62,15 @@ func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	investmentRoutes := router.PathPrefix("/investments").Subrouter()
 	investmentRoutes.HandleFunc("", handlers.GetOpportunities).Methods(http.MethodGet)
 
-	userInvestmentRoute := router.PathPrefix("/users/me/investment").Subrouter()
-	userInvestmentRoute.HandleFunc("/", handlers.CreateUserInvestment).Methods(http.MethodPost)
-	userInvestmentRoute.HandleFunc("/", handlers.GetUserInvestments).Methods(http.MethodGet)
+	userInvestmentRoutes := router.PathPrefix("/users/me/investment").Subrouter()
+	userInvestmentRoutes.HandleFunc("/", handlers.CreateUserInvestment).Methods(http.MethodPost)
+	userInvestmentRoutes.HandleFunc("/", handlers.GetUserInvestments).Methods(http.MethodGet)
 
 	transactionRoutes := router.PathPrefix("/transactions").Subrouter()
 	transactionRoutes.HandleFunc("", handlers.CreateTransaction).Methods(http.MethodPost)
 	transactionRoutes.HandleFunc("", handlers.GetTransactions).Methods(http.MethodGet)
+
+	gachaRoutes := router.PathPrefix("/gacha").Subrouter()
+	gachaRoutes.HandleFunc("/draw", handlers.DrawGacha).Methods(http.MethodPost)
+	gachaRoutes.HandleFunc("/preview", handlers.PreviewGachas).Methods(http.MethodGet)
 }

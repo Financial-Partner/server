@@ -24,6 +24,7 @@ func InitializeServer(cfgFile string) (*Server, error) {
 		ProvideGoalService,
 		ProvideInvestmentService,
 		ProvideTransactionService,
+		ProvideGachaService,
 		ProvideHandler,
 		ProvideAuthMiddleware,
 		ProvideRouter,
