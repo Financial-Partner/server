@@ -192,7 +192,7 @@ func TestPreviewGacha(t *testing.T) {
 		userID := primitive.NewObjectID().Hex()
 		userEmail := "test@example.com"
 
-		gachas := make([]entities.Gacha, 9) // Create a slice for 10 Gacha objects
+		gachas := make([]entities.Gacha, 9) // Create a slice for 9 Gacha objects
 		for i := 0; i < 9; i++ {
 			objectID := primitive.NewObjectID()
 			gachas[i] = entities.Gacha{
@@ -218,7 +218,7 @@ func TestPreviewGacha(t *testing.T) {
 		var response dto.PreviewGachasResponse
 		err := json.NewDecoder(w.Body).Decode(&response)
 		assert.NoError(t, err)
-		assert.Len(t, response.Gachas, 9) // Check if the length of the Gachas slice is 10
+		assert.Len(t, response.Gachas, 9) // Check if the length of the Gachas slice is 9
 		for i, gacha := range gachas {
 			assert.Equal(t, gacha.ID.Hex(), response.Gachas[i].ID)
 			assert.Equal(t, gacha.ImgSrc, response.Gachas[i].ImgSrc)
