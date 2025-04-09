@@ -45,17 +45,5 @@ func (r *MongoTransactionRepository) FindByUserId(ctx context.Context, userID st
 		return nil, fmt.Errorf("no transactions found for user ID: %s", userID)
 	}
 
-	for cursor.Next(ctx) {
-		var transaction entities.Transaction
-		if err := cursor.Decode(&transaction); err != nil {
-			return nil, err
-		}
-		transactions = append(transactions, transaction)
-	}
-
-	if err := cursor.Err(); err != nil {
-		return nil, err
-	}
-
 	return transactions, nil
 }
