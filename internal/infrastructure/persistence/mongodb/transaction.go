@@ -40,9 +40,5 @@ func (r *MongoTransactionRepository) FindByUserId(ctx context.Context, userID st
 		return nil, err
 	}
 
-	if len(transactions) == 0 {
-		return nil, nil
-	}
-
 	return transactions, nil
 }
