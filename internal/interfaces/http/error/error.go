@@ -2,6 +2,7 @@ package httperror
 
 const (
 	ErrInvalidRequest               = "Invalid request format"
+	ErrInvalidParameter             = "Invalid parameter format"
 	ErrUnauthorized                 = "Unauthorized"
 	ErrEmailNotFound                = "Email not found"
 	ErrUserIDNotFound               = "User ID not found"
@@ -24,4 +25,6 @@ const (
 	ErrFailedToCreateTransaction    = "Failed to create a transaction"
 	ErrFailedToDrawGacha            = "Failed to draw a gacha"
 	ErrFailedToPreviewGachas        = "Failed to preview gachas"
+	ErrFailedToGetReport            = "Failed to get report"
+	ErrFailedToGetReportSummary     = "Failed to get report summary"
 )

@@ -18,6 +18,7 @@ type MockServices struct {
 	InvestmentService  *handler.MockInvestmentService
 	TransactionService *handler.MockTransactionService
 	GachaService       *handler.MockGachaService
+	ReportService      *handler.MockReportService
 }
 
 func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
@@ -31,8 +32,9 @@ func newTestHandler(t *testing.T) (*handler.Handler, *MockServices) {
 		InvestmentService:  handler.NewMockInvestmentService(ctrl),
 		TransactionService: handler.NewMockTransactionService(ctrl),
 		GachaService:       handler.NewMockGachaService(ctrl),
+		ReportService:      handler.NewMockReportService(ctrl),
 	}
-	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, ms.InvestmentService, ms.TransactionService, ms.GachaService, logger.NewNopLogger())
+	h := handler.NewHandler(ms.UserService, ms.AuthService, ms.GoalService, ms.InvestmentService, ms.TransactionService, ms.GachaService, ms.ReportService, logger.NewNopLogger())
 
 	return h, ms
 }

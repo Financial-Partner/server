@@ -73,4 +73,8 @@ func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	gachaRoutes := router.PathPrefix("/gacha").Subrouter()
 	gachaRoutes.HandleFunc("/draw", handlers.DrawGacha).Methods(http.MethodPost)
 	gachaRoutes.HandleFunc("/preview", handlers.PreviewGachas).Methods(http.MethodGet)
+
+	reportRoutes := router.PathPrefix("/reports").Subrouter()
+	reportRoutes.HandleFunc("/finance", handlers.GetReport).Methods(http.MethodGet)
+	reportRoutes.HandleFunc("/analysis", handlers.GetReportSummary).Methods(http.MethodGet)
 }
