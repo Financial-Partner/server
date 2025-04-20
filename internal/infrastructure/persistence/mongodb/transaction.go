@@ -2,7 +2,6 @@ package mongodb
 
 import (
 	"context"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -42,7 +41,7 @@ func (r *MongoTransactionRepository) FindByUserId(ctx context.Context, userID st
 	}
 
 	if len(transactions) == 0 {
-		return nil, fmt.Errorf("no transactions found for user ID: %s", userID)
+		return nil, nil
 	}
 
 	return transactions, nil

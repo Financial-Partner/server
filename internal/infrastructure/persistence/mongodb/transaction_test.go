@@ -82,7 +82,7 @@ func TestMongoTransactionRepository(t *testing.T) {
 			mt.AddMockResponses(mtest.CreateCursorResponse(0, "foo.bar", mtest.FirstBatch))
 			repo := mongodb.NewTransactionRepository(mt.DB)
 			result, err := repo.FindByUserId(context.Background(), testUserID)
-			assert.Error(t, err)
+			assert.Nil(t, err)
 			assert.Nil(t, result)
 		})
 		mt.Run("database error", func(mt *mtest.T) {
