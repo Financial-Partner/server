@@ -17,7 +17,7 @@ import (
 
 type TransactionService interface {
 	CreateTransaction(ctx context.Context, UserID string, transaction *dto.CreateTransactionRequest) (*entities.Transaction, error)
-	GetTransactions(ctx context.Context, UserId string) ([]entities.Transaction, error)
+	GetTransactions(ctx context.Context, UserID string) ([]entities.Transaction, error)
 }
 
 // @Summary Get transactions
