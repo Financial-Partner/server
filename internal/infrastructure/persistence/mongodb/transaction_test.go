@@ -27,8 +27,8 @@ func TestMongoTransactionRepository(t *testing.T) {
 			Date:        time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 			Category:    "Food",
 			Type:        "expense",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
+			CreatedAt:   time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),
+			UpdatedAt:   time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),
 		},
 		{
 			ID:          primitive.NewObjectID(),
@@ -38,8 +38,8 @@ func TestMongoTransactionRepository(t *testing.T) {
 			Date:        time.Date(2023, time.January, 2, 0, 0, 0, 0, time.UTC),
 			Category:    "Housing",
 			Type:        "expense",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
+			CreatedAt:   time.Date(2023, time.January, 30, 0, 0, 0, 0, time.UTC),
+			UpdatedAt:   time.Date(2023, time.January, 30, 0, 0, 0, 0, time.UTC),
 		},
 	}
 
@@ -68,14 +68,7 @@ func TestMongoTransactionRepository(t *testing.T) {
 
 			// Validate each transaction
 			for i, transaction := range result {
-				assert.Equal(t, testTransactions[i].ID, transaction.ID)
-				assert.Equal(t, testTransactions[i].UserID, transaction.UserID)
-				assert.Equal(t, testTransactions[i].Amount, transaction.Amount)
-				assert.Equal(t, testTransactions[i].Description, transaction.Description)
-				_, err := time.Parse(time.DateOnly, transaction.Date.Format(time.DateOnly))
-				require.NoError(t, err)
-				assert.Equal(t, testTransactions[i].Category, transaction.Category)
-				assert.Equal(t, testTransactions[i].Type, transaction.Type)
+				assert.Equal(t, testTransactions[i], transaction)
 			}
 		})
 		mt.Run("not found", func(mt *mtest.T) {
@@ -104,13 +97,7 @@ func TestMongoTransactionRepository(t *testing.T) {
 			result, err := repo.Create(context.Background(), &(testTransactions[0]))
 			assert.NoError(t, err)
 			assert.NotNil(t, result)
-			assert.Equal(t, testTransactions[0].ID, result.ID)
-			assert.Equal(t, testTransactions[0].UserID, result.UserID)
-			assert.Equal(t, testTransactions[0].Amount, result.Amount)
-			assert.Equal(t, testTransactions[0].Description, result.Description)
-			assert.Equal(t, testTransactions[0].Date, result.Date)
-			assert.Equal(t, testTransactions[0].Category, result.Category)
-			assert.Equal(t, testTransactions[0].Type, result.Type)
+			assert.Equal(t, testTransactions[0], *result)
 		})
 		mt.Run("error", func(mt *mtest.T) {
 			mt.AddMockResponses(mtest.CreateCommandErrorResponse(mtest.CommandError{

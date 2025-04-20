@@ -76,7 +76,7 @@ func TestGetOpportunities(t *testing.T) {
 		userEmail := "test@example.com"
 		opportunities := []entities.Opportunity{
 			{
-				ID:          "investment_123456",
+				ID:          primitive.NewObjectID(),
 				Title:       "Test investments",
 				Description: "Test description",
 				Tags:        []string{"test", "investments"},
@@ -151,7 +151,7 @@ func TestCreateUserInvestment(t *testing.T) {
 		h, _ := newTestHandler(t)
 
 		req := dto.CreateUserInvestmentRequest{
-			OpportunityID: "opportunity_123456",
+			OpportunityID: primitive.NewObjectID().Hex(),
 			Amount:        1000,
 		}
 		body, _ := json.Marshal(req)
@@ -181,7 +181,7 @@ func TestCreateUserInvestment(t *testing.T) {
 			Return(nil, errors.New("service error"))
 
 		req := dto.CreateUserInvestmentRequest{
-			OpportunityID: "opportunity_123456",
+			OpportunityID: primitive.NewObjectID().Hex(),
 			Amount:        1000,
 		}
 		body, _ := json.Marshal(req)
@@ -210,9 +210,9 @@ func TestCreateUserInvestment(t *testing.T) {
 
 		now := time.Now()
 		investment := &entities.Investment{
-			ID:            "investment_123456",
+			ID:            primitive.NewObjectID(),
 			UserID:        userID,
-			OpportunityID: "opportunity_123",
+			OpportunityID: primitive.NewObjectID().Hex(),
 			Amount:        1000,
 			CreatedAt:     now,
 			UpdatedAt:     now,
@@ -223,7 +223,7 @@ func TestCreateUserInvestment(t *testing.T) {
 			Return(investment, nil)
 
 		req := dto.CreateUserInvestmentRequest{
-			OpportunityID: "opportunity_123",
+			OpportunityID: primitive.NewObjectID().Hex(),
 			Amount:        1000,
 		}
 
@@ -305,10 +305,11 @@ func TestGetUserInvestments(t *testing.T) {
 		userEmail := "test@example.com"
 		investments := []entities.Investment{
 			{
-				ID:        "investment_123456",
-				Amount:    1000,
-				CreatedAt: now.AddDate(0, -1, 0),
-				UpdatedAt: now,
+				ID:            primitive.NewObjectID(),
+				OpportunityID: primitive.NewObjectID().Hex(),
+				Amount:        1000,
+				CreatedAt:     now.AddDate(0, -1, 0),
+				UpdatedAt:     now,
 			},
 		}
 
@@ -331,7 +332,7 @@ func TestGetUserInvestments(t *testing.T) {
 		assert.NoError(t, err)
 		// Compare the response with the expected data
 		assert.Len(t, response.Investments, 1)
-		assert.Equal(t, investments[0].ID, response.Investments[0].ID)
+		assert.Equal(t, investments[0].OpportunityID, response.Investments[0].OpportunityID)
 		assert.Equal(t, investments[0].Amount, response.Investments[0].Amount)
 		assert.Equal(t, investments[0].CreatedAt.Format(time.RFC3339), response.Investments[0].CreatedAt)
 		assert.Equal(t, investments[0].UpdatedAt.Format(time.RFC3339), response.Investments[0].UpdatedAt)

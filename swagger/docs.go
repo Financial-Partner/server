@@ -1235,10 +1235,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "2023-01-01T00:00:00Z"
                 },
-                "id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
-                },
                 "opportunity_id": {
                     "type": "string",
                     "example": "60d6ec33f777b123e4567890"
@@ -1328,10 +1324,6 @@ const docTemplate = `{
                 "duration": {
                     "type": "string",
                     "example": "a month"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
                 },
                 "is_increase": {
                     "type": "boolean",

@@ -1,7 +1,6 @@
 package dto
 
 type OpportunityResponse struct {
-	ID          string   `json:"id" example:"60d6ec33f777b123e4567890"`
 	Title       string   `json:"title" example:"Investment in stock market"`
 	Description string   `json:"description" example:"Investment in stock market is a good way to make money"`
 	Tags        []string `json:"tags" example:"stock, market"`
@@ -14,7 +13,6 @@ type OpportunityResponse struct {
 }
 
 type InvestmentResponse struct {
-	ID            string `json:"id" example:"60d6ec33f777b123e4567890"`
 	OpportunityID string `json:"opportunity_id" example:"60d6ec33f777b123e4567890"`
 	UserID        string `json:"user_id" example:"60d6ec33f777b123e4567890"`
 	Amount        int64  `json:"amount" example:"1000"`

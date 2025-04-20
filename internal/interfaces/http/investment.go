@@ -49,7 +49,6 @@ func (h *Handler) GetOpportunities(w http.ResponseWriter, r *http.Request) {
 	var opportunitiesResponses []dto.OpportunityResponse
 	for _, opportunity := range opportunities {
 		opportunitiesResponses = append(opportunitiesResponses, dto.OpportunityResponse{
-			ID:          opportunity.ID,
 			Title:       opportunity.Title,
 			Description: opportunity.Description,
 			Tags:        opportunity.Tags,
@@ -104,7 +103,6 @@ func (h *Handler) CreateUserInvestment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := dto.InvestmentResponse{
-		ID:            investment.ID,
 		OpportunityID: investment.OpportunityID,
 		UserID:        investment.UserID,
 		Amount:        investment.Amount,
@@ -143,10 +141,10 @@ func (h *Handler) GetUserInvestments(w http.ResponseWriter, r *http.Request) {
 	var investmentsResponse []dto.InvestmentResponse
 	for _, investment := range investments {
 		investmentsResponse = append(investmentsResponse, dto.InvestmentResponse{
-			ID:        investment.ID,
-			Amount:    investment.Amount,
-			CreatedAt: investment.CreatedAt.Format(time.RFC3339),
-			UpdatedAt: investment.UpdatedAt.Format(time.RFC3339),
+			OpportunityID: investment.OpportunityID,
+			Amount:        investment.Amount,
+			CreatedAt:     investment.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:     investment.UpdatedAt.Format(time.RFC3339),
 		})
 	}
 

@@ -207,9 +207,6 @@ definitions:
       created_at:
         example: "2023-01-01T00:00:00Z"
         type: string
-      id:
-        example: 60d6ec33f777b123e4567890
-        type: string
       opportunity_id:
         example: 60d6ec33f777b123e4567890
         type: string
@@ -272,9 +269,6 @@ definitions:
         type: string
       duration:
         example: a month
-        type: string
-      id:
-        example: 60d6ec33f777b123e4567890
         type: string
       is_increase:
         example: true
