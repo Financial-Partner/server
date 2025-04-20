@@ -52,7 +52,7 @@ func (h *Handler) GetReport(w http.ResponseWriter, r *http.Request) {
 	if end != "" {
 		endDate, err = time.Parse("2006-01-02", end)
 		if err != nil {
-			h.log.Warnf("Invalid start date format. Use YYYY-MM-DD.")
+			h.log.Warnf("Invalid end date format. Use YYYY-MM-DD.")
 			responde.WithError(w, r, h.log, err, httperror.ErrInvalidParameter, http.StatusBadRequest)
 			return
 		}
