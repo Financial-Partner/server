@@ -27,6 +27,14 @@ func (r *MongoInvestmentResporitory) CreateInvestment(ctx context.Context, entit
 	return entity, nil
 }
 
+func (r *MongoInvestmentResporitory) CreateOpportunity(ctx context.Context, entity *entities.Opportunity) (*entities.Opportunity, error) {
+	_, err := r.collection.InsertOne(ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
+}
+
 func (r *MongoInvestmentResporitory) FindOpportunitiesByUserId(ctx context.Context, userID string) ([]entities.Opportunity, error) {
 	var opportunities []entities.Opportunity
 	cursor, err := r.collection.Find(ctx, bson.M{"user_id": userID})

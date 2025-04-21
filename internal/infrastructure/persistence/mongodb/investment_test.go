@@ -20,8 +20,8 @@ func TestMongoInvestmentRepository(t *testing.T) {
 
 	testInvestment := &entities.Investment{
 		ID:            primitive.NewObjectID(),
-		UserID:        testUserID,
-		OpportunityID: primitive.NewObjectID().Hex(),
+		UserID:        primitive.NewObjectID(),
+		OpportunityID: primitive.NewObjectID(),
 		Amount:        1000,
 		CreatedAt:     time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:     time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),
@@ -91,6 +91,34 @@ func TestMongoInvestmentRepository(t *testing.T) {
 			assert.NoError(t, err)
 			assert.NotNil(t, result)
 			assert.Equal(t, testInvestment, result)
+		})
+	})
+
+	t.Run("CreateOpportunity", func(t *testing.T) {
+		mt.Run("error", func(mt *mtest.T) {
+			mt.AddMockResponses(
+				mtest.CreateCommandErrorResponse(mtest.CommandError{
+					Code:    11000,
+					Message: "Duplicate key error",
+				}),
+			)
+
+			repo := mongodb.NewInvestmentRepository(mt.DB)
+			result, err := repo.CreateOpportunity(context.Background(), testOpportunity)
+			assert.Error(t, err)
+			assert.Nil(t, result)
+		})
+
+		mt.Run("success", func(mt *mtest.T) {
+			mt.AddMockResponses(
+				mtest.CreateSuccessResponse(),
+			)
+
+			repo := mongodb.NewInvestmentRepository(mt.DB)
+			result, err := repo.CreateOpportunity(context.Background(), testOpportunity)
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, testOpportunity, result)
 		})
 	})
 

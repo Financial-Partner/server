@@ -55,8 +55,8 @@ func TestInvestmentStore(t *testing.T) {
 		investments := []entities.Investment{
 			{
 				ID:            primitive.NewObjectID(),
-				UserID:        primitive.NewObjectID().Hex(),
-				OpportunityID: primitive.NewObjectID().Hex(),
+				UserID:        primitive.NewObjectID(),
+				OpportunityID: primitive.NewObjectID(),
 				Amount:        1000,
 				CreatedAt:     time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),
 				UpdatedAt:     time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),
@@ -101,8 +101,8 @@ func TestInvestmentStore(t *testing.T) {
 		mockInvestments := []entities.Investment{
 			{
 				ID:            primitive.NewObjectID(),
-				UserID:        primitive.NewObjectID().Hex(),
-				OpportunityID: primitive.NewObjectID().Hex(),
+				UserID:        primitive.NewObjectID(),
+				OpportunityID: primitive.NewObjectID(),
 				Amount:        1000,
 				CreatedAt:     time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),
 				UpdatedAt:     time.Date(2023, time.January, 31, 0, 0, 0, 0, time.UTC),

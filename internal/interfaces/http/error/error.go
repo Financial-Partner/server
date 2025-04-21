@@ -19,6 +19,7 @@ const (
 	ErrFailedToUpdateGoal           = "Failed to update goal"
 	ErrFailedToGetGoal              = "Failed to get goal"
 	ErrFailedToGetOpportunities     = "Failed to get investment opportunities"
+	ErrFailedToCreateOpportunity    = "Failed to create investment opportunity"
 	ErrFailedToCreateUserInvestment = "Failed to create an user investment"
 	ErrFailedToGetUserInvestments   = "Failed to get user investments"
 	ErrFailedToGetTransactions      = "Failed to get transactions"

@@ -25,3 +25,7 @@ func (s *Service) CreateUserInvestment(ctx context.Context, userID string, req *
 func (s *Service) GetUserInvestments(ctx context.Context, userID string) ([]entities.Investment, error) {
 	return nil, nil
 }
+
+func (s *Service) CreateOpportunity(ctx context.Context, userID string, req *dto.CreateOpportunityRequest) (*entities.Opportunity, error) {
+	return nil, nil
+}

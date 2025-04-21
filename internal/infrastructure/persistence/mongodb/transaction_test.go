@@ -21,7 +21,7 @@ func TestMongoTransactionRepository(t *testing.T) {
 	testTransactions := []entities.Transaction{
 		{
 			ID:          primitive.NewObjectID(),
-			UserID:      testUserID,
+			UserID:      primitive.NewObjectID(),
 			Amount:      100,
 			Description: "Dinner",
 			Date:        time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
@@ -32,7 +32,7 @@ func TestMongoTransactionRepository(t *testing.T) {
 		},
 		{
 			ID:          primitive.NewObjectID(),
-			UserID:      testUserID,
+			UserID:      primitive.NewObjectID(),
 			Amount:      200,
 			Description: "Rent",
 			Date:        time.Date(2023, time.January, 2, 0, 0, 0, 0, time.UTC),

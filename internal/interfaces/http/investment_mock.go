@@ -42,6 +42,36 @@ func (m *MockInvestmentService) EXPECT() *MockInvestmentServiceMockRecorder {
 	return m.recorder
 }
 
+// CreateOpportunity mocks base method.
+func (m *MockInvestmentService) CreateOpportunity(ctx context.Context, userID string, req *dto.CreateOpportunityRequest) (*entities.Opportunity, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOpportunity", ctx, userID, req)
+	ret0, _ := ret[0].(*entities.Opportunity)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateOpportunity indicates an expected call of CreateOpportunity.
+func (mr *MockInvestmentServiceMockRecorder) CreateOpportunity(ctx, userID, req any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOpportunity", reflect.TypeOf((*MockInvestmentService)(nil).CreateOpportunity), ctx, userID, req)
+}
+
+// CreateUserInvestment mocks base method.
+func (m *MockInvestmentService) CreateUserInvestment(ctx context.Context, userID string, req *dto.CreateUserInvestmentRequest) (*entities.Investment, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateUserInvestment", ctx, userID, req)
+	ret0, _ := ret[0].(*entities.Investment)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateUserInvestment indicates an expected call of CreateUserInvestment.
+func (mr *MockInvestmentServiceMockRecorder) CreateUserInvestment(ctx, userID, req any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUserInvestment", reflect.TypeOf((*MockInvestmentService)(nil).CreateUserInvestment), ctx, userID, req)
+}
+
 // GetOpportunities mocks base method.
 func (m *MockInvestmentService) GetOpportunities(ctx context.Context, userID string) ([]entities.Opportunity, error) {
 	m.ctrl.T.Helper()
@@ -66,23 +96,8 @@ func (m *MockInvestmentService) GetUserInvestments(ctx context.Context, userID s
 	return ret0, ret1
 }
 
-// GetInvestments indicates an expected call of GetInvestments.
+// GetUserInvestments indicates an expected call of GetUserInvestments.
 func (mr *MockInvestmentServiceMockRecorder) GetUserInvestments(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserInvestments", reflect.TypeOf((*MockInvestmentService)(nil).GetUserInvestments), ctx, userID)
-}
-
-// CreateUserInvestment mocks base method.
-func (m *MockInvestmentService) CreateUserInvestment(ctx context.Context, userID string, req *dto.CreateUserInvestmentRequest) (*entities.Investment, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateUserInvestment", ctx, userID, req)
-	ret0, _ := ret[0].(*entities.Investment)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateUserInvestment indicates an expected call of CreateUserInvestment.
-func (mr *MockInvestmentServiceMockRecorder) CreateUserInvestment(ctx, userID, req any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateUserInvestment", reflect.TypeOf((*MockInvestmentService)(nil).CreateUserInvestment), ctx, userID, req)
 }

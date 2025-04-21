@@ -122,7 +122,7 @@ func TestCreateTransaction(t *testing.T) {
 			Date:        time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 			Category:    "Food",
 			Type:        "expense",
-			UserID:      userID,
+			UserID:      primitive.NewObjectID(),
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -227,7 +227,7 @@ func TestGetTransactions(t *testing.T) {
 				Date:        time.Date(2023, time.January, 1, 0, 0, 0, 0, time.UTC),
 				Category:    "Food",
 				Type:        "expense",
-				UserID:      userID,
+				UserID:      primitive.NewObjectID(),
 				CreatedAt:   now,
 				UpdatedAt:   now,
 			},

@@ -13,4 +13,5 @@ type InvestmentService interface {
 	GetOpportunities(ctx context.Context, userID string) ([]entities.Opportunity, error)
 	CreateUserInvestment(ctx context.Context, userID string, req *dto.CreateUserInvestmentRequest) (*entities.Investment, error)
 	GetUserInvestments(ctx context.Context, userID string) ([]entities.Investment, error)
+	CreateOpportunity(ctx context.Context, userID string, req *dto.CreateOpportunityRequest) (*entities.Opportunity, error)
 }

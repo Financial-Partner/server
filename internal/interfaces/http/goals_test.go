@@ -326,8 +326,8 @@ func TestCreateGoal(t *testing.T) {
 
 		now := time.Now()
 		goal := &entities.Goal{
-			ID:            "goal_123456",
-			UserID:        userID,
+			ID:            primitive.NewObjectID(),
+			UserID:        primitive.NewObjectID(),
 			TargetAmount:  10000,
 			CurrentAmount: 0,
 			Period:        30,
@@ -424,8 +424,8 @@ func TestGetGoal(t *testing.T) {
 
 		now := time.Now()
 		goal := &entities.Goal{
-			ID:            "goal_123456",
-			UserID:        userID,
+			ID:            primitive.NewObjectID(),
+			UserID:        primitive.NewObjectID(),
 			TargetAmount:  10000,
 			CurrentAmount: 5000,
 			Period:        30,

@@ -19,6 +19,7 @@ type InvestmentService interface {
 	GetOpportunities(ctx context.Context, userID string) ([]entities.Opportunity, error)
 	CreateUserInvestment(ctx context.Context, userID string, req *dto.CreateUserInvestmentRequest) (*entities.Investment, error)
 	GetUserInvestments(ctx context.Context, userID string) ([]entities.Investment, error)
+	CreateOpportunity(ctx context.Context, userID string, req *dto.CreateOpportunityRequest) (*entities.Opportunity, error)
 }
 
 // @Summary Get investment opportunities
@@ -103,8 +104,7 @@ func (h *Handler) CreateUserInvestment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp := dto.InvestmentResponse{
-		OpportunityID: investment.OpportunityID,
-		UserID:        investment.UserID,
+		OpportunityID: investment.OpportunityID.Hex(),
 		Amount:        investment.Amount,
 		CreatedAt:     investment.CreatedAt.Format(time.RFC3339),
 		UpdatedAt:     investment.UpdatedAt.Format(time.RFC3339),
@@ -141,7 +141,7 @@ func (h *Handler) GetUserInvestments(w http.ResponseWriter, r *http.Request) {
 	var investmentsResponse []dto.InvestmentResponse
 	for _, investment := range investments {
 		investmentsResponse = append(investmentsResponse, dto.InvestmentResponse{
-			OpportunityID: investment.OpportunityID,
+			OpportunityID: investment.OpportunityID.Hex(),
 			Amount:        investment.Amount,
 			CreatedAt:     investment.CreatedAt.Format(time.RFC3339),
 			UpdatedAt:     investment.UpdatedAt.Format(time.RFC3339),
@@ -150,6 +150,56 @@ func (h *Handler) GetUserInvestments(w http.ResponseWriter, r *http.Request) {
 
 	resp := dto.GetUserInvestmentsResponse{
 		Investments: investmentsResponse,
+	}
+
+	responde.WithJSON(w, r, resp, http.StatusOK)
+}
+
+// @Summary Create an investment opportunity
+// @Description Create an investment opportunity
+// @Tags investments
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateOpportunityRequest true "Create opportunity request"
+// @Param Authorization header string true "Bearer {token}" default "Bearer "
+// @Success 201 {object} dto.CreateOpportunityResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /investments [post]
+func (h *Handler) CreateOpportunity(w http.ResponseWriter, r *http.Request) {
+	userID, ok := contextutil.GetUserID(r.Context())
+	if !ok {
+		h.log.Warnf("failed to get user ID from context")
+		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		return
+	}
+
+	var req dto.CreateOpportunityRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.log.WithError(err).Warnf("failed to decode request body")
+		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		return
+	}
+
+	opportunity, err := h.investmentService.CreateOpportunity(r.Context(), userID, &req)
+	if err != nil {
+		h.log.WithError(err).Warnf("failed to create an user investment")
+		responde.WithError(w, r, h.log, err, httperror.ErrFailedToCreateOpportunity, http.StatusInternalServerError)
+		return
+	}
+
+	resp := dto.OpportunityResponse{
+		OpportunityID: opportunity.ID.Hex(),
+		Title:         opportunity.Title,
+		Description:   opportunity.Description,
+		Tags:          opportunity.Tags,
+		IsIncrease:    opportunity.IsIncrease,
+		Variation:     opportunity.Variation,
+		Duration:      opportunity.Duration,
+		MinAmount:     opportunity.MinAmount,
+		CreatedAt:     opportunity.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:     opportunity.UpdatedAt.Format(time.RFC3339),
 	}
 
 	responde.WithJSON(w, r, resp, http.StatusOK)

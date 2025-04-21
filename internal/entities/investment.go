@@ -21,8 +21,8 @@ type Opportunity struct {
 
 type Investment struct {
 	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	UserID        string             `bson:"user_id" json:"user_id"`
-	OpportunityID string             `bson:"opportunity_id" json:"opportunity_id"`
+	UserID        primitive.ObjectID `bson:"user_id" json:"user_id"`
+	OpportunityID primitive.ObjectID `bson:"opportunity_id" json:"opportunity_id"`
 	Amount        int64              `bson:"amount" json:"amount"`
 	CreatedAt     time.Time          `bson:"created_at" json:"created_at"`
 	UpdatedAt     time.Time          `bson:"updated_at" json:"updated_at"`

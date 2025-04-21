@@ -10,6 +10,7 @@ import (
 
 type Repository interface {
 	CreateInvestment(ctx context.Context, entity *entities.Investment) (*entities.Investment, error)
+	CreateOpportunity(ctx context.Context, entity *entities.Opportunity) (*entities.Opportunity, error)
 	FindOpportunitiesByUserId(ctx context.Context, userID string) ([]entities.Opportunity, error)
 	FindInvestmentsByUserId(ctx context.Context, userID string) ([]entities.Investment, error)
 }

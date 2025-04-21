@@ -30,7 +30,7 @@ func TestTransactionStore(t *testing.T) {
 		mockTransactions := []entities.Transaction{
 			{
 				ID:          primitive.NewObjectID(),
-				UserID:      userID,
+				UserID:      primitive.NewObjectID(),
 				Amount:      100,
 				Description: "Groceries",
 				Date:        time.Now(),
@@ -41,7 +41,7 @@ func TestTransactionStore(t *testing.T) {
 			},
 			{
 				ID:          primitive.NewObjectID(),
-				UserID:      userID,
+				UserID:      primitive.NewObjectID(),
 				Amount:      200,
 				Description: "Rent",
 				Date:        time.Now(),
@@ -87,7 +87,7 @@ func TestTransactionStore(t *testing.T) {
 		mockTransactions := []entities.Transaction{
 			{
 				ID:          primitive.NewObjectID(),
-				UserID:      userID,
+				UserID:      primitive.NewObjectID(),
 				Amount:      100,
 				Description: "Groceries",
 				Date:        time.Now(),
@@ -98,7 +98,7 @@ func TestTransactionStore(t *testing.T) {
 			},
 			{
 				ID:          primitive.NewObjectID(),
-				UserID:      userID,
+				UserID:      primitive.NewObjectID(),
 				Amount:      200,
 				Description: "Rent",
 				Date:        time.Now(),

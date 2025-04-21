@@ -24,6 +24,47 @@ definitions:
     - period
     - target_amount
     type: object
+  dto.CreateOpportunityRequest:
+    properties:
+      description:
+        example: Investment in stock market is a good way to make money
+        type: string
+      duration:
+        example: a month
+        type: string
+      is_increase:
+        example: true
+        type: boolean
+      min_amount:
+        example: 1000
+        type: integer
+      tags:
+        example:
+        - high risk
+        - long term
+        items:
+          type: string
+        type: array
+      title:
+        example: Real Estate
+        type: string
+      variation:
+        example: 20
+        type: integer
+    required:
+    - description
+    - duration
+    - is_increase
+    - min_amount
+    - tags
+    - title
+    - variation
+    type: object
+  dto.CreateOpportunityResponse:
+    properties:
+      opportunity:
+        $ref: '#/definitions/dto.OpportunityResponse'
+    type: object
   dto.CreateTransactionRequest:
     properties:
       amount:
@@ -213,9 +254,6 @@ definitions:
       updated_at:
         example: "2023-06-01T00:00:00Z"
         type: string
-      user_id:
-        example: 60d6ec33f777b123e4567890
-        type: string
     type: object
   dto.LoginRequest:
     properties:
@@ -276,15 +314,18 @@ definitions:
       min_amount:
         example: 1000
         type: integer
+      opportunity_id:
+        example: 60d6ec33f777b123e4567890
+        type: string
       tags:
         example:
-        - stock
-        - ' market'
+        - high risk
+        - long term
         items:
           type: string
         type: array
       title:
-        example: Investment in stock market
+        example: Real Estate
         type: string
       updated_at:
         example: "2023-06-01T00:00:00Z"
@@ -785,6 +826,44 @@ paths:
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: Get investment opportunities
+      tags:
+      - investments
+    post:
+      consumes:
+      - application/json
+      description: Create an investment opportunity
+      parameters:
+      - description: Create opportunity request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateOpportunityRequest'
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.CreateOpportunityResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Create an investment opportunity
       tags:
       - investments
   /reports/analysis:
