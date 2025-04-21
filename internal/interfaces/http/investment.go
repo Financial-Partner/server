@@ -10,7 +10,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
-	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
+	respond "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
 //go:generate mockgen -source=investment.go -destination=investment_mock.go -package=handler
@@ -36,14 +36,14 @@ func (h *Handler) GetOpportunities(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	opportunities, err := h.investmentService.GetOpportunities(r.Context(), userID)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to get investment opportunities")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetOpportunities, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetOpportunities, http.StatusInternalServerError)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (h *Handler) GetOpportunities(w http.ResponseWriter, r *http.Request) {
 		Opportunities: opportunitiesResponses,
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Create user investment
@@ -85,21 +85,21 @@ func (h *Handler) CreateUserInvestment(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	var req dto.CreateUserInvestmentRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("failed to decode request body")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	investment, err := h.investmentService.CreateUserInvestment(r.Context(), userID, &req)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to create an user investment")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToCreateUserInvestment, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToCreateUserInvestment, http.StatusInternalServerError)
 		return
 	}
 
@@ -110,7 +110,7 @@ func (h *Handler) CreateUserInvestment(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:     investment.UpdatedAt.Format(time.RFC3339),
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Get user investments
@@ -127,14 +127,14 @@ func (h *Handler) GetUserInvestments(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	investments, err := h.investmentService.GetUserInvestments(r.Context(), userID)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to get user investments")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetUserInvestments, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetUserInvestments, http.StatusInternalServerError)
 		return
 	}
 
@@ -152,7 +152,7 @@ func (h *Handler) GetUserInvestments(w http.ResponseWriter, r *http.Request) {
 		Investments: investmentsResponse,
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Create an investment opportunity
@@ -171,21 +171,21 @@ func (h *Handler) CreateOpportunity(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	var req dto.CreateOpportunityRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("failed to decode request body")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	opportunity, err := h.investmentService.CreateOpportunity(r.Context(), userID, &req)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to create an user investment")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToCreateOpportunity, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToCreateOpportunity, http.StatusInternalServerError)
 		return
 	}
 
@@ -202,5 +202,5 @@ func (h *Handler) CreateOpportunity(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:     opportunity.UpdatedAt.Format(time.RFC3339),
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }

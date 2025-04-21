@@ -10,7 +10,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
-	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
+	respond "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
 //go:generate mockgen -source=goals.go -destination=goals_mock.go -package=handler
@@ -37,21 +37,21 @@ func (h *Handler) GetGoalSuggestion(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	var req dto.GoalSuggestionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("failed to decode request body")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	suggestion, err := h.goalService.GetGoalSuggestion(r.Context(), userID, &req)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to get goal suggestion")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetGoalSuggestion, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetGoalSuggestion, http.StatusInternalServerError)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (h *Handler) GetGoalSuggestion(w http.ResponseWriter, r *http.Request) {
 		Message:         suggestion.Message,
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Calculate and return suggested saving goals based on user's expense data
@@ -78,14 +78,14 @@ func (h *Handler) GetAutoGoalSuggestion(w http.ResponseWriter, r *http.Request) 
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	suggestion, err := h.goalService.GetAutoGoalSuggestion(r.Context(), userID)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to get auto goal suggestion")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetGoalSuggestion, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetGoalSuggestion, http.StatusInternalServerError)
 		return
 	}
 
@@ -95,7 +95,7 @@ func (h *Handler) GetAutoGoalSuggestion(w http.ResponseWriter, r *http.Request) 
 		Message:         suggestion.Message,
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Create user's saving goal
@@ -114,21 +114,21 @@ func (h *Handler) CreateGoal(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	var req dto.CreateGoalRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("failed to decode request body")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	goal, err := h.goalService.CreateGoal(r.Context(), userID, &req)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to create or update goal")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToCreateGoal, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToCreateGoal, http.StatusInternalServerError)
 		return
 	}
 
@@ -141,7 +141,7 @@ func (h *Handler) CreateGoal(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:     goal.UpdatedAt.Format(time.RFC3339),
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Get current saving goal
@@ -158,14 +158,14 @@ func (h *Handler) GetGoal(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	goal, err := h.goalService.GetGoal(r.Context(), userID)
 	if err != nil {
 		h.log.WithError(err).Warnf("failed to get goal")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetGoal, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetGoal, http.StatusInternalServerError)
 		return
 	}
 
@@ -180,5 +180,5 @@ func (h *Handler) GetGoal(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }

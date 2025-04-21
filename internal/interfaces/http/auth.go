@@ -9,7 +9,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
-	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
+	respond "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
 //go:generate mockgen -source=auth.go -destination=auth_mock.go -package=handler
@@ -36,14 +36,14 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	var req dto.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("Invalid request format")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	accessToken, refreshToken, expiresIn, userInfo, err := h.authService.LoginWithFirebase(r.Context(), req.FirebaseToken)
 	if err != nil {
 		h.log.WithError(err).Errorf("Login failed")
-		responde.WithError(w, r, h.log, err, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, err, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	responde.WithJSON(w, r, response, http.StatusOK)
+	respond.WithJSON(w, r, response, http.StatusOK)
 }
 
 // RefreshToken Refresh Access Token
@@ -80,14 +80,14 @@ func (h *Handler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	var req dto.RefreshTokenRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("Invalid request format")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	newAccessToken, newRefreshToken, expiresIn, err := h.authService.RefreshToken(r.Context(), req.RefreshToken)
 	if err != nil {
 		h.log.WithError(err).Errorf("Token refresh failed")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRefreshToken, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRefreshToken, http.StatusUnauthorized)
 		return
 	}
 
@@ -98,7 +98,7 @@ func (h *Handler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 		TokenType:    "Bearer",
 	}
 
-	responde.WithJSON(w, r, response, http.StatusOK)
+	respond.WithJSON(w, r, response, http.StatusOK)
 }
 
 // Logout Logout
@@ -116,14 +116,14 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 	var req dto.LogoutRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("Invalid request format")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	err := h.authService.Logout(r.Context(), req.RefreshToken)
 	if err != nil {
 		h.log.WithError(err).Errorf("Logout failed")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToLogout, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToLogout, http.StatusInternalServerError)
 		return
 	}
 
@@ -132,5 +132,5 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		Message: "Logout successfully",
 	}
 
-	responde.WithJSON(w, r, response, http.StatusOK)
+	respond.WithJSON(w, r, response, http.StatusOK)
 }

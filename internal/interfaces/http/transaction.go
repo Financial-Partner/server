@@ -10,7 +10,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
-	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
+	respond "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
 //go:generate mockgen -source=transaction.go -destination=transaction_mock.go -package=handler
@@ -34,14 +34,14 @@ func (h *Handler) GetTransactions(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	transactions, err := h.transactionService.GetTransactions(r.Context(), userID)
 	if err != nil {
 		h.log.Errorf("failed to get transactions")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetTransactions, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetTransactions, http.StatusInternalServerError)
 		return
 	}
 
@@ -62,7 +62,7 @@ func (h *Handler) GetTransactions(w http.ResponseWriter, r *http.Request) {
 		Transactions: transactionResponses,
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Create a transaction
@@ -81,21 +81,21 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	var req dto.CreateTransactionRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("failed to decode request body")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	transaction, err := h.transactionService.CreateTransaction(r.Context(), userID, &req)
 	if err != nil {
 		h.log.Errorf("failed to create transaction")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToCreateTransaction, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToCreateTransaction, http.StatusInternalServerError)
 		return
 	}
 
@@ -109,5 +109,5 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt:   transaction.UpdatedAt.Format(time.RFC3339),
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
