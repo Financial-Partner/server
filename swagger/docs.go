@@ -1436,8 +1436,8 @@ const docTemplate = `{
                         "type": "string"
                     },
                     "example": [
-                        "[\"Food\"",
-                        " \"Transport\"]"
+                        "Food",
+                        "Transport"
                     ]
                 },
                 "expenses": {
