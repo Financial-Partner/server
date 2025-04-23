@@ -4,7 +4,7 @@ type ReportResponse struct {
 	Revenue     int64     `json:"revenue" example:"10000" binding:"required"`
 	Expenses    int64     `json:"expenses" example:"5000" binding:"required"`
 	NetProfit   int64     `json:"net_profit" example:"5000" binding:"required"`
-	Categorys   []string  `json:"categorys" example:"Food,Transport" binding:"required"`
+	Categories  []string  `json:"categories" example:"Food,Transport" binding:"required"`
 	Amounts     []int64   `json:"amounts" example:"1000,2000" binding:"required"`
 	Percentages []float64 `json:"percentages" example:"0.33,0.67" binding:"required"`
 }

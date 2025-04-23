@@ -94,7 +94,7 @@ func TestGetReport(t *testing.T) {
 			Revenue:     1000,
 			Expenses:    500,
 			NetProfit:   500,
-			Categorys:   []string{"Food", "Transport"},
+			Categories:  []string{"Food", "Transport"},
 			Amounts:     []int64{200, 300},
 			Percentages: []float64{0.4, 0.6},
 		}
@@ -119,7 +119,7 @@ func TestGetReport(t *testing.T) {
 		assert.Equal(t, report.Revenue, response.Revenue)
 		assert.Equal(t, report.Expenses, response.Expenses)
 		assert.Equal(t, report.NetProfit, response.NetProfit)
-		assert.Equal(t, report.Categorys, response.Categorys)
+		assert.Equal(t, report.Categories, response.Categories)
 		assert.Equal(t, report.Amounts, response.Amounts)
 		assert.Equal(t, report.Percentages, response.Percentages)
 	})

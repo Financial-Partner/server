@@ -338,7 +338,7 @@ definitions:
         items:
           type: integer
         type: array
-      categorys:
+      categories:
         example:
         - Food
         - Transport
@@ -363,7 +363,7 @@ definitions:
         type: integer
     required:
     - amounts
-    - categorys
+    - categories
     - expenses
     - net_profit
     - percentages

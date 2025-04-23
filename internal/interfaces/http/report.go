@@ -80,7 +80,7 @@ func (h *Handler) GetReport(w http.ResponseWriter, r *http.Request) {
 		Revenue:     report.Revenue,
 		Expenses:    report.Expenses,
 		NetProfit:   report.NetProfit,
-		Categorys:   report.Categorys,
+		Categories:  report.Categories,
 		Amounts:     report.Amounts,
 		Percentages: report.Percentages,
 	}

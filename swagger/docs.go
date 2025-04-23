@@ -1413,7 +1413,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "amounts",
-                "categorys",
+                "categories",
                 "expenses",
                 "net_profit",
                 "percentages",
@@ -1430,7 +1430,7 @@ const docTemplate = `{
                         2000
                     ]
                 },
-                "categorys": {
+                "categories": {
                     "type": "array",
                     "items": {
                         "type": "string"

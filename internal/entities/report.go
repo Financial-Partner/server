@@ -4,7 +4,7 @@ type Report struct {
 	Revenue     int64     `bson:"revenue" json:"revenue"`
 	Expenses    int64     `bson:"expenses" json:"expenses"`
 	NetProfit   int64     `bson:"net_profit" json:"net_profit"`
-	Categorys   []string  `bson:"categorys" json:"categorys"`
+	Categories  []string  `bson:"categories" json:"categories"`
 	Amounts     []int64   `bson:"amounts" json:"amounts"`
 	Percentages []float64 `bson:"percentages" json:"percentages"`
 }
