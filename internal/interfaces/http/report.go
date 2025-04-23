@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Financial-Partner/server/internal/contextutil"
@@ -26,8 +27,8 @@ type ReportService interface {
 // @Produce json
 // @Param Authorization header string true "Bearer {token}" default
 // @Param type query string true "Type of report (summary or detailed)"
-// @Param start query string false "Start date in YYYY-MM-DD format"
-// @Param end query string false "End date in YYYY-MM-DD format"
+// @Param start query int64 false "Start time as Unix timestamp (seconds since epoch)"
+// @Param end query int64 false "End time as Unix timestamp (seconds since epoch)"
 // @Success 200 {object} dto.ReportResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 401 {object} dto.ErrorResponse
@@ -42,20 +43,23 @@ func (h *Handler) GetReport(w http.ResponseWriter, r *http.Request) {
 	var startDate, endDate time.Time
 	var err error
 	if start != "" {
-		startDate, err = time.Parse("2006-01-02", start)
+		startTimestamp, err := strconv.ParseInt(start, 10, 64) // Parse Unix timestamp
 		if err != nil {
-			h.log.Warnf("Invalid start date format. Use YYYY-MM-DD.")
+			h.log.Warnf("Invalid start timestamp format. Use a valid Unix timestamp.")
 			responde.WithError(w, r, h.log, err, httperror.ErrInvalidParameter, http.StatusBadRequest)
 			return
 		}
+		startDate = time.Unix(startTimestamp, 0).UTC() // Convert to time.Time in UTC
 	}
+
 	if end != "" {
-		endDate, err = time.Parse("2006-01-02", end)
+		endTimestamp, err := strconv.ParseInt(end, 10, 64) // Parse Unix timestamp
 		if err != nil {
-			h.log.Warnf("Invalid end date format. Use YYYY-MM-DD.")
+			h.log.Warnf("Invalid end timestamp format. Use a valid Unix timestamp.")
 			responde.WithError(w, r, h.log, err, httperror.ErrInvalidParameter, http.StatusBadRequest)
 			return
 		}
+		endDate = time.Unix(endTimestamp, 0).UTC() // Convert to time.Time in UTC
 	}
 
 	userID, ok := contextutil.GetUserID(r.Context())

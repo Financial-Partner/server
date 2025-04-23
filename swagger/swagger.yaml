@@ -332,6 +332,9 @@ definitions:
   dto.ReportResponse:
     properties:
       amounts:
+        example:
+        - 1000
+        - 2000
         items:
           type: integer
         type: array
@@ -349,6 +352,9 @@ definitions:
         example: 5000
         type: integer
       percentages:
+        example:
+        - 0.33
+        - 0.67
         items:
           type: number
         type: array
@@ -356,9 +362,11 @@ definitions:
         example: 10000
         type: integer
     required:
+    - amounts
     - categorys
     - expenses
     - net_profit
+    - percentages
     - revenue
     type: object
   dto.ReportSummaryResponse:
@@ -830,14 +838,14 @@ paths:
         name: type
         required: true
         type: string
-      - description: Start date in YYYY-MM-DD format
+      - description: Start time as Unix timestamp (seconds since epoch)
         in: query
         name: start
-        type: string
-      - description: End date in YYYY-MM-DD format
+        type: integer
+      - description: End time as Unix timestamp (seconds since epoch)
         in: query
         name: end
-        type: string
+        type: integer
       produces:
       - application/json
       responses:

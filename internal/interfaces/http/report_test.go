@@ -40,7 +40,7 @@ func TestGetReport(t *testing.T) {
 		h, _ := newTestHandler(t)
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("GET", "/reports/finance?type=summary&start=invalid-date&end=2025-01-31", nil)
+		r := httptest.NewRequest("GET", "/reports/finance?type=summary&start=invalid-date&end=1748908800", nil)
 
 		h.GetReport(w, r)
 
@@ -68,7 +68,7 @@ func TestGetReport(t *testing.T) {
 			Return(nil, errors.New("service error"))
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("GET", "/reports/finance?type=summary&start=2025-01-01&end=2025-01-31", nil)
+		r := httptest.NewRequest("GET", "/reports/finance?type=summary&start=1735689600&end=1748908800", nil)
 		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 
@@ -104,7 +104,7 @@ func TestGetReport(t *testing.T) {
 			Return(report, nil)
 
 		w := httptest.NewRecorder()
-		r := httptest.NewRequest("GET", "/reports/finance?type=summary&start=2025-01-01&end=2025-01-31", nil)
+		r := httptest.NewRequest("GET", "/reports/finance?type=summary&start=1735689600&end=1748908800", nil)
 		ctx := newContext(userID, userEmail)
 		r = r.WithContext(ctx)
 

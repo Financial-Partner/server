@@ -577,14 +577,14 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Start date in YYYY-MM-DD format",
+                        "type": "integer",
+                        "description": "Start time as Unix timestamp (seconds since epoch)",
                         "name": "start",
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "End date in YYYY-MM-DD format",
+                        "type": "integer",
+                        "description": "End time as Unix timestamp (seconds since epoch)",
                         "name": "end",
                         "in": "query"
                     }
@@ -1412,9 +1412,11 @@ const docTemplate = `{
         "dto.ReportResponse": {
             "type": "object",
             "required": [
+                "amounts",
                 "categorys",
                 "expenses",
                 "net_profit",
+                "percentages",
                 "revenue"
             ],
             "properties": {
@@ -1422,7 +1424,11 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "integer"
-                    }
+                    },
+                    "example": [
+                        1000,
+                        2000
+                    ]
                 },
                 "categorys": {
                     "type": "array",
@@ -1446,7 +1452,11 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "number"
-                    }
+                    },
+                    "example": [
+                        0.33,
+                        0.67
+                    ]
                 },
                 "revenue": {
                     "type": "integer",
