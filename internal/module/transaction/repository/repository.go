@@ -6,7 +6,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 )
 
-//go:generate mockgen -source=repository.go -destination=transaction_repository_mock.go -package=transaction_repository
+//go:generate mockgen -source=repository.go -destination=repository_mock.go -package=transaction_repository
 
 type Repository interface {
 	Create(ctx context.Context, transaction *entities.Transaction) (*entities.Transaction, error)

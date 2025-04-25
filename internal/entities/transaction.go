@@ -8,7 +8,7 @@ import (
 
 type Transaction struct {
 	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	UserID      string             `bson:"user_id" json:"user_id"`
+	UserID      primitive.ObjectID `bson:"user_id" json:"user_id"`
 	Amount      int                `bson:"amount" json:"amount"`
 	Description string             `bson:"description" json:"description"`
 	Date        time.Time          `bson:"date" json:"date"`

@@ -502,6 +502,63 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "Create an investment opportunity",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "investments"
+                ],
+                "summary": "Create an investment opportunity",
+                "parameters": [
+                    {
+                        "description": "Create opportunity request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOpportunityRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateOpportunityResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
             }
         },
         "/reports/analysis": {
@@ -976,6 +1033,62 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.CreateOpportunityRequest": {
+            "type": "object",
+            "required": [
+                "description",
+                "duration",
+                "is_increase",
+                "min_amount",
+                "tags",
+                "title",
+                "variation"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "example": "Investment in stock market is a good way to make money"
+                },
+                "duration": {
+                    "type": "string",
+                    "example": "a month"
+                },
+                "is_increase": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "min_amount": {
+                    "type": "integer",
+                    "example": 1000
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "high risk",
+                        "long term"
+                    ]
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Real Estate"
+                },
+                "variation": {
+                    "type": "integer",
+                    "example": 20
+                }
+            }
+        },
+        "dto.CreateOpportunityResponse": {
+            "type": "object",
+            "properties": {
+                "opportunity": {
+                    "$ref": "#/definitions/dto.OpportunityResponse"
+                }
+            }
+        },
         "dto.CreateTransactionRequest": {
             "type": "object",
             "required": [
@@ -1235,10 +1348,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "2023-01-01T00:00:00Z"
                 },
-                "id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
-                },
                 "opportunity_id": {
                     "type": "string",
                     "example": "60d6ec33f777b123e4567890"
@@ -1246,10 +1355,6 @@ const docTemplate = `{
                 "updated_at": {
                     "type": "string",
                     "example": "2023-06-01T00:00:00Z"
-                },
-                "user_id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
                 }
             }
         },
@@ -1329,10 +1434,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "a month"
                 },
-                "id": {
-                    "type": "string",
-                    "example": "60d6ec33f777b123e4567890"
-                },
                 "is_increase": {
                     "type": "boolean",
                     "example": true
@@ -1341,19 +1442,23 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1000
                 },
+                "opportunity_id": {
+                    "type": "string",
+                    "example": "60d6ec33f777b123e4567890"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     },
                     "example": [
-                        "stock",
-                        " market"
+                        "high risk",
+                        "long term"
                     ]
                 },
                 "title": {
                     "type": "string",
-                    "example": "Investment in stock market"
+                    "example": "Real Estate"
                 },
                 "updated_at": {
                     "type": "string",

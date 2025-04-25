@@ -10,7 +10,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
-	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
+	respond "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
 //go:generate mockgen -source=user.go -destination=user_mock.go -package=handler
@@ -39,21 +39,21 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var req dto.UpdateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.log.WithError(err).Warnf("Invalid request format")
-		responde.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
 		return
 	}
 
 	id, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Errorf("User ID not found in context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUserIDNotFound, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUserIDNotFound, http.StatusInternalServerError)
 		return
 	}
 
 	updatedUser, err := h.userService.UpdateUserName(r.Context(), id, req.Name)
 	if err != nil {
 		h.log.WithError(err).Errorf("Failed to update user")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToUpdateUser, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToUpdateUser, http.StatusInternalServerError)
 		return
 	}
 
@@ -66,7 +66,7 @@ func (h *Handler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt: updatedUser.UpdatedAt.Format(time.RFC3339),
 	}
 
-	responde.WithJSON(w, r, response, http.StatusOK)
+	respond.WithJSON(w, r, response, http.StatusOK)
 }
 
 // GetUser GetUser
@@ -86,7 +86,7 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	email, ok := contextutil.GetUserEmail(r.Context())
 	if !ok {
 		h.log.Errorf("User email not found in context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrEmailNotFound, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, nil, httperror.ErrEmailNotFound, http.StatusInternalServerError)
 		return
 	}
 
@@ -99,13 +99,13 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userEntity, err := h.userService.GetUser(r.Context(), email)
 	if err != nil {
 		logger.WithError(err).Errorf("Failed to get user")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetUser, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetUser, http.StatusInternalServerError)
 		return
 	}
 
 	response := buildUserResponse(userEntity, scopes)
 
-	responde.WithJSON(w, r, response, http.StatusOK)
+	respond.WithJSON(w, r, response, http.StatusOK)
 }
 
 func buildUserResponse(user *entities.User, scopes []string) dto.GetUserResponse {
