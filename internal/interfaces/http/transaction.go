@@ -94,7 +94,7 @@ func (h *Handler) CreateTransaction(w http.ResponseWriter, r *http.Request) {
 
 	transaction, err := h.transactionService.CreateTransaction(r.Context(), userID, &req)
 	if err != nil {
-		h.log.Errorf("failed to create transaction")
+		h.log.Errorf("failed to create transaction: %v", err)
 		respond.WithError(w, r, h.log, err, httperror.ErrFailedToCreateTransaction, http.StatusInternalServerError)
 		return
 	}

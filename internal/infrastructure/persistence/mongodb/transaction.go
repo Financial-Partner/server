@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/Financial-Partner/server/internal/entities"
@@ -28,7 +29,7 @@ func (r *MongoTransactionRepository) Create(ctx context.Context, entity *entitie
 	return entity, nil
 }
 
-func (r *MongoTransactionRepository) FindByUserId(ctx context.Context, userID string) ([]entities.Transaction, error) {
+func (r *MongoTransactionRepository) FindByUserId(ctx context.Context, userID primitive.ObjectID) ([]entities.Transaction, error) {
 	var transactions []entities.Transaction
 	cursor, err := r.collection.Find(ctx, bson.M{"user_id": userID})
 	if err != nil {

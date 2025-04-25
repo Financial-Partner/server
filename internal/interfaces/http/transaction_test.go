@@ -110,7 +110,7 @@ func TestCreateTransaction(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
-		userID := primitive.NewObjectID().Hex()
+		userID := primitive.NewObjectID()
 		userEmail := "test@example.com"
 
 		now := time.Now()
@@ -128,7 +128,7 @@ func TestCreateTransaction(t *testing.T) {
 		}
 
 		mockServices.TransactionService.EXPECT().
-			CreateTransaction(gomock.Any(), userID, gomock.Any()).
+			CreateTransaction(gomock.Any(), userID.Hex(), gomock.Any()).
 			Return(transaction, nil)
 
 		req := dto.CreateTransactionRequest{
@@ -141,7 +141,7 @@ func TestCreateTransaction(t *testing.T) {
 		body, _ := json.Marshal(req)
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("POST", "/transactions", bytes.NewBuffer(body))
-		ctx := newContext(userID, userEmail)
+		ctx := newContext(userID.Hex(), userEmail)
 		r = r.WithContext(ctx)
 
 		h.CreateTransaction(w, r)
@@ -187,16 +187,16 @@ func TestGetTransactions(t *testing.T) {
 	t.Run("Service error", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
-		userID := primitive.NewObjectID().Hex()
+		userID := primitive.NewObjectID()
 		userEmail := "test@example.com"
 
 		mockServices.TransactionService.EXPECT().
-			GetTransactions(gomock.Any(), userID).
+			GetTransactions(gomock.Any(), userID.Hex()).
 			Return(nil, errors.New("service error"))
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/transactions", nil)
-		ctx := newContext(userID, userEmail)
+		ctx := newContext(userID.Hex(), userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetTransactions(w, r)
@@ -214,7 +214,7 @@ func TestGetTransactions(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		h, mockServices := newTestHandler(t)
 
-		userID := primitive.NewObjectID().Hex()
+		userID := primitive.NewObjectID()
 		userEmail := "test@example.com"
 
 		now := time.Now()
@@ -234,12 +234,12 @@ func TestGetTransactions(t *testing.T) {
 		}
 
 		mockServices.TransactionService.EXPECT().
-			GetTransactions(gomock.Any(), userID).
+			GetTransactions(gomock.Any(), userID.Hex()).
 			Return(transactions, nil)
 
 		w := httptest.NewRecorder()
 		r := httptest.NewRequest("GET", "/transactions", nil)
-		ctx := newContext(userID, userEmail)
+		ctx := newContext(userID.Hex(), userEmail)
 		r = r.WithContext(ctx)
 
 		h.GetTransactions(w, r)
