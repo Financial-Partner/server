@@ -10,7 +10,7 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 	"github.com/Financial-Partner/server/internal/interfaces/http/dto"
 	httperror "github.com/Financial-Partner/server/internal/interfaces/http/error"
-	responde "github.com/Financial-Partner/server/internal/interfaces/http/respond"
+	respond "github.com/Financial-Partner/server/internal/interfaces/http/respond"
 )
 
 //go:generate mockgen -source=report.go -destination=report_mock.go -package=handler
@@ -46,7 +46,7 @@ func (h *Handler) GetReport(w http.ResponseWriter, r *http.Request) {
 		startTimestamp, err := strconv.ParseInt(start, 10, 64) // Parse Unix timestamp
 		if err != nil {
 			h.log.Warnf("Invalid start timestamp format. Use a valid Unix timestamp.")
-			responde.WithError(w, r, h.log, err, httperror.ErrInvalidParameter, http.StatusBadRequest)
+			respond.WithError(w, r, h.log, err, httperror.ErrInvalidParameter, http.StatusBadRequest)
 			return
 		}
 		startDate = time.Unix(startTimestamp, 0).UTC() // Convert to time.Time in UTC
@@ -56,7 +56,7 @@ func (h *Handler) GetReport(w http.ResponseWriter, r *http.Request) {
 		endTimestamp, err := strconv.ParseInt(end, 10, 64) // Parse Unix timestamp
 		if err != nil {
 			h.log.Warnf("Invalid end timestamp format. Use a valid Unix timestamp.")
-			responde.WithError(w, r, h.log, err, httperror.ErrInvalidParameter, http.StatusBadRequest)
+			respond.WithError(w, r, h.log, err, httperror.ErrInvalidParameter, http.StatusBadRequest)
 			return
 		}
 		endDate = time.Unix(endTimestamp, 0).UTC() // Convert to time.Time in UTC
@@ -65,14 +65,14 @@ func (h *Handler) GetReport(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	report, err := h.reportService.GetReport(r.Context(), userID, startDate, endDate, reportType)
 	if err != nil {
 		h.log.Errorf("failed to get report")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetReport, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetReport, http.StatusInternalServerError)
 		return
 	}
 
@@ -85,7 +85,7 @@ func (h *Handler) GetReport(w http.ResponseWriter, r *http.Request) {
 		Percentages: report.Percentages,
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }
 
 // @Summary Get report summary
@@ -102,14 +102,14 @@ func (h *Handler) GetReportSummary(w http.ResponseWriter, r *http.Request) {
 	userID, ok := contextutil.GetUserID(r.Context())
 	if !ok {
 		h.log.Warnf("failed to get user ID from context")
-		responde.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
+		respond.WithError(w, r, h.log, nil, httperror.ErrUnauthorized, http.StatusUnauthorized)
 		return
 	}
 
 	reportSummary, err := h.reportService.GetReportSummary(r.Context(), userID)
 	if err != nil {
 		h.log.Errorf("failed to get report summary")
-		responde.WithError(w, r, h.log, err, httperror.ErrFailedToGetReportSummary, http.StatusInternalServerError)
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetReportSummary, http.StatusInternalServerError)
 		return
 	}
 
@@ -117,5 +117,5 @@ func (h *Handler) GetReportSummary(w http.ResponseWriter, r *http.Request) {
 		Summary: reportSummary.Summary,
 	}
 
-	responde.WithJSON(w, r, resp, http.StatusOK)
+	respond.WithJSON(w, r, resp, http.StatusOK)
 }

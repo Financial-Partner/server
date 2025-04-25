@@ -20,6 +20,7 @@ import (
 	goal_usecase "github.com/Financial-Partner/server/internal/module/goal/usecase"
 	investment_usecase "github.com/Financial-Partner/server/internal/module/investment/usecase"
 	report_usecase "github.com/Financial-Partner/server/internal/module/report/usecase"
+	transaction_repository "github.com/Financial-Partner/server/internal/module/transaction/repository"
 	transaction_usecase "github.com/Financial-Partner/server/internal/module/transaction/usecase"
 	user_repository "github.com/Financial-Partner/server/internal/module/user/repository"
 	user_usecase "github.com/Financial-Partner/server/internal/module/user/usecase"
@@ -58,6 +59,14 @@ func ProvideUserService(repo user_repository.Repository, store *perRedis.UserSto
 	return user_usecase.NewService(repo, store, log)
 }
 
+func ProvideTransactionRepository(db *dbInfra.Client) transaction_repository.Repository {
+	return perMongo.NewTransactionRepository(db)
+}
+
+func ProvideTransactionStore(cache *cacheInfra.Client) *perRedis.TransactionStore {
+	return perRedis.NewTransactionStore(cache)
+}
+
 func ProvideJWTManager(cfg *config.Config) *authInfra.JWTManager {
 	return authInfra.NewJWTManager(cfg.JWT.SecretKey, cfg.JWT.AccessExpiry, cfg.JWT.RefreshExpiry)
 }
@@ -84,8 +93,8 @@ func ProvideInvestmentService() *investment_usecase.Service {
 	return investment_usecase.NewService()
 }
 
-func ProvideTransactionService() *transaction_usecase.Service {
-	return transaction_usecase.NewService()
+func ProvideTransactionService(repo transaction_repository.Repository, store *perRedis.TransactionStore, log loggerInfra.Logger) *transaction_usecase.Service {
+	return transaction_usecase.NewService(repo, store, log)
 }
 
 func ProvideGachaService() *gacha_usecase.Service {

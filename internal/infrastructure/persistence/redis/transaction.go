@@ -2,11 +2,12 @@ package redis
 
 import (
 	"context"
-	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/Financial-Partner/server/internal/entities"
+	"github.com/redis/go-redis/v9"
 )
 
 const (
@@ -31,13 +32,18 @@ func (s *TransactionStore) GetByUserId(ctx context.Context, userID string) ([]en
 	return transactions, nil
 }
 
-func (s *TransactionStore) SetByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error {
-	data, err := json.Marshal(transactions)
-	if err != nil {
+func (s *TransactionStore) SetMultipleByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error {
+	existingTransactions, err := s.GetByUserId(ctx, userID)
+	if err != nil && !errors.Is(err, redis.Nil) {
 		return err
 	}
 
-	return s.cacheClient.Set(ctx, fmt.Sprintf(transactionCacheKey, userID), data, transactionCacheTTL)
+	transactions = append(existingTransactions, transactions...)
+	err = s.cacheClient.Set(ctx, fmt.Sprintf(transactionCacheKey, userID), transactions, transactionCacheTTL)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *TransactionStore) DeleteByUserId(ctx context.Context, userID string) error {

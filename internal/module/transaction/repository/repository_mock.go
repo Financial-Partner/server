@@ -14,6 +14,7 @@ import (
 	reflect "reflect"
 
 	entities "github.com/Financial-Partner/server/internal/entities"
+	primitive "go.mongodb.org/mongo-driver/bson/primitive"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -57,7 +58,7 @@ func (mr *MockRepositoryMockRecorder) Create(ctx, transaction any) *gomock.Call 
 }
 
 // FindByUserId mocks base method.
-func (m *MockRepository) FindByUserId(ctx context.Context, userID string) ([]entities.Transaction, error) {
+func (m *MockRepository) FindByUserId(ctx context.Context, userID primitive.ObjectID) ([]entities.Transaction, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByUserId", ctx, userID)
 	ret0, _ := ret[0].([]entities.Transaction)
@@ -95,6 +96,34 @@ func (m *MockTransactionStore) EXPECT() *MockTransactionStoreMockRecorder {
 	return m.recorder
 }
 
+// AddByUserId mocks base method.
+func (m *MockTransactionStore) AddByUserId(ctx context.Context, userID string, transaction *entities.Transaction) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddByUserId", ctx, userID, transaction)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddByUserId indicates an expected call of AddByUserId.
+func (mr *MockTransactionStoreMockRecorder) AddByUserId(ctx, userID, transaction any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddByUserId", reflect.TypeOf((*MockTransactionStore)(nil).AddByUserId), ctx, userID, transaction)
+}
+
+// SetMultipleByUserId mocks base method.
+func (m *MockTransactionStore) SetMultipleByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetMultipleByUserId", ctx, userID, transactions)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetMultipleByUserId indicates an expected call of SetMultipleByUserId.
+func (mr *MockTransactionStoreMockRecorder) SetMultipleByUserId(ctx, userID, transactions any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetMultipleByUserId", reflect.TypeOf((*MockTransactionStore)(nil).SetMultipleByUserId), ctx, userID, transactions)
+}
+
 // DeleteByUserId mocks base method.
 func (m *MockTransactionStore) DeleteByUserId(ctx context.Context, userID string) error {
 	m.ctrl.T.Helper()
@@ -122,18 +151,4 @@ func (m *MockTransactionStore) GetByUserId(ctx context.Context, userID string) (
 func (mr *MockTransactionStoreMockRecorder) GetByUserId(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetByUserId", reflect.TypeOf((*MockTransactionStore)(nil).GetByUserId), ctx, userID)
-}
-
-// SetByUserId mocks base method.
-func (m *MockTransactionStore) SetByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetByUserId", ctx, userID, transactions)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// SetByUserId indicates an expected call of SetByUserId.
-func (mr *MockTransactionStoreMockRecorder) SetByUserId(ctx, userID, transactions any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetByUserId", reflect.TypeOf((*MockTransactionStore)(nil).SetByUserId), ctx, userID, transactions)
 }

@@ -17,7 +17,7 @@ import (
 func TestMongoTransactionRepository(t *testing.T) {
 	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
 
-	testUserID := primitive.NewObjectID().Hex()
+	testUserID := primitive.NewObjectID()
 	testTransactions := []entities.Transaction{
 		{
 			ID:          primitive.NewObjectID(),
