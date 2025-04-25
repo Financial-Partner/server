@@ -17,6 +17,7 @@ type Repository interface {
 
 type TransactionStore interface {
 	GetByUserId(ctx context.Context, userID string) ([]entities.Transaction, error)
-	SetByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error
 	DeleteByUserId(ctx context.Context, userID string) error
+	AddByUserId(ctx context.Context, userID string, transaction *entities.Transaction) error
+	SetMultipleByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error
 }

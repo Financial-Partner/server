@@ -22,6 +22,7 @@ func NewTransactionRepository(db MongoClient) transaction_repository.Repository 
 }
 
 func (r *MongoTransactionRepository) Create(ctx context.Context, entity *entities.Transaction) (*entities.Transaction, error) {
+	entity.ID = primitive.NewObjectID()
 	_, err := r.collection.InsertOne(ctx, entity)
 	if err != nil {
 		return nil, err
