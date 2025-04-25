@@ -55,8 +55,16 @@ func (s *Service) CreateTransaction(ctx context.Context, userID string, req *dto
 		return nil, fmt.Errorf("failed to create transaction: %w", err)
 	}
 
-	// Return the created transaction
-	cacheErr := s.store.SetByUserId(ctx, userID, []entities.Transaction{*createdTransaction})
+	cachedTransactions, err := s.store.GetByUserId(ctx, userID)
+	if err != nil && err.Error() != "redis: nil" {
+		return nil, fmt.Errorf("failed to get cached transactions: %w", err)
+	}
+	if cachedTransactions != nil {
+		cachedTransactions = append(cachedTransactions, *createdTransaction)
+	} else {
+		cachedTransactions = []entities.Transaction{*createdTransaction}
+	}
+	cacheErr := s.store.SetByUserId(ctx, userID, cachedTransactions)
 	if cacheErr != nil {
 		s.log.Warnf("Failed to cache transaction for userID %s: %v", userID, cacheErr)
 	}

@@ -2,7 +2,6 @@ package redis
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -32,12 +31,7 @@ func (s *TransactionStore) GetByUserId(ctx context.Context, userID string) ([]en
 }
 
 func (s *TransactionStore) SetByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error {
-	data, err := json.Marshal(transactions)
-	if err != nil {
-		return err
-	}
-
-	return s.cacheClient.Set(ctx, fmt.Sprintf(transactionCacheKey, userID), data, transactionCacheTTL)
+	return s.cacheClient.Set(ctx, fmt.Sprintf(transactionCacheKey, userID), transactions, transactionCacheTTL)
 }
 
 func (s *TransactionStore) DeleteByUserId(ctx context.Context, userID string) error {
