@@ -52,14 +52,15 @@ func (s *Service) CreateTransaction(ctx context.Context, userID string, req *dto
 	// Call the repository to persist the transaction
 	createdTransaction, err := s.repo.Create(ctx, transaction)
 	if err != nil {
-		cacheErr := s.store.SetByUserId(ctx, userID, []entities.Transaction{*createdTransaction})
-		if cacheErr != nil {
-			s.log.Warnf("Failed to cache transaction for userID %s: %v", userID, cacheErr)
-		}
 		return nil, fmt.Errorf("failed to create transaction: %w", err)
 	}
 
 	// Return the created transaction
+	cacheErr := s.store.SetByUserId(ctx, userID, []entities.Transaction{*createdTransaction})
+	if cacheErr != nil {
+		s.log.Warnf("Failed to cache transaction for userID %s: %v", userID, cacheErr)
+	}
+
 	return createdTransaction, nil
 }
 
