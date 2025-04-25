@@ -78,65 +78,6 @@ func TestTransactionStore(t *testing.T) {
 		assert.Nil(t, transactions)
 	})
 
-	t.Run("AddByUserIdSuccess", func(t *testing.T) {
-		mockRedisClient := redis.NewMockRedisClient(ctrl)
-		transactionStore := redis.NewTransactionStore(mockRedisClient)
-
-		// Mock data
-		userID := primitive.NewObjectID()
-		existingTransactions := []entities.Transaction{
-			{
-				ID:          primitive.NewObjectID(),
-				UserID:      userID,
-				Amount:      100,
-				Description: "Groceries",
-				Date:        time.Now(),
-				Category:    "Food",
-				Type:        "expense",
-				CreatedAt:   time.Now(),
-				UpdatedAt:   time.Now(),
-			},
-		}
-		newTransaction := &entities.Transaction{
-			ID:          primitive.NewObjectID(),
-			UserID:      userID,
-			Amount:      200,
-			Description: "Rent",
-			Date:        time.Now(),
-			Category:    "Housing",
-			Type:        "expense",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
-		}
-
-		mockData, _ := json.Marshal(existingTransactions)
-
-		mockRedisClient.EXPECT().Get(
-			gomock.Any(),
-			fmt.Sprintf("user:%s:transactions", userID.Hex()),
-			gomock.Any(),
-		).DoAndReturn(
-			func(_ context.Context, _ string, dest interface{}) error {
-				return json.Unmarshal(mockData, dest)
-			},
-		)
-
-		mockRedisClient.EXPECT().Set(
-			gomock.Any(),
-			fmt.Sprintf("user:%s:transactions", userID.Hex()),
-			gomock.Any(),
-			gomock.Any(),
-		).DoAndReturn(
-			func(_ context.Context, _ string, value interface{}, _ time.Duration) error {
-				return nil
-			},
-		)
-
-		// Call AddByUserId
-		err := transactionStore.AddByUserId(context.Background(), userID.Hex(), newTransaction)
-		require.NoError(t, err)
-	})
-
 	t.Run("SetMultipleByUserIdWithExistingTransactions", func(t *testing.T) {
 		mockRedisClient := redis.NewMockRedisClient(ctrl)
 		transactionStore := redis.NewTransactionStore(mockRedisClient)

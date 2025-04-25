@@ -32,20 +32,6 @@ func (s *TransactionStore) GetByUserId(ctx context.Context, userID string) ([]en
 	return transactions, nil
 }
 
-func (s *TransactionStore) AddByUserId(ctx context.Context, userID string, transaction *entities.Transaction) error {
-	transactions, err := s.GetByUserId(ctx, userID)
-	if err != nil && !errors.Is(err, redis.Nil) {
-		return err
-	}
-
-	transactions = append(transactions, *transaction)
-	err = s.cacheClient.Set(ctx, fmt.Sprintf(transactionCacheKey, userID), transactions, transactionCacheTTL)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (s *TransactionStore) SetMultipleByUserId(ctx context.Context, userID string, transactions []entities.Transaction) error {
 	existingTransactions, err := s.GetByUserId(ctx, userID)
 	if err != nil && !errors.Is(err, redis.Nil) {

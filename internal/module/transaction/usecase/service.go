@@ -55,9 +55,9 @@ func (s *Service) CreateTransaction(ctx context.Context, userID string, req *dto
 		return nil, fmt.Errorf("failed to create transaction: %w", err)
 	}
 
-	cacheErr := s.store.AddByUserId(ctx, userID, createdTransaction)
+	cacheErr := s.store.DeleteByUserId(ctx, userID)
 	if cacheErr != nil {
-		s.log.Warnf("Failed to cache transaction for userID %s: %v", userID, cacheErr)
+		s.log.Warnf("Failed to delete transaction cache for userID %s: %v", userID, cacheErr)
 	}
 
 	return createdTransaction, nil
