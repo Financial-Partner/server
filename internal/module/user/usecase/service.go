@@ -2,6 +2,7 @@ package user_usecase
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/Financial-Partner/server/internal/entities"
@@ -90,6 +91,32 @@ func (s *Service) GetOrCreateUser(ctx context.Context, email, name string) (*ent
 
 func (s *Service) UpdateUserName(ctx context.Context, id, name string) (*entities.User, error) {
 	return nil, nil
+}
+
+func (s *Service) UpdateUserCharacter(ctx context.Context, email, characterID, imageURL string) (*entities.User, error) {
+	user, err := s.GetUser(ctx, email)
+	if err != nil {
+		s.log.WithError(err).Errorf("Failed to find user")
+		return nil, err
+	}
+
+	if user.Character.ID != "" {
+		s.log.Errorf("User character already set")
+		return nil, errors.New("user character already set")
+	}
+
+	user.Character.ID = characterID
+	user.Character.ImageURL = imageURL
+
+	err = s.repo.Update(ctx, user)
+	if err != nil {
+		s.log.WithError(err).Errorf("Failed to update user character")
+		return nil, err
+	}
+
+	s.setUserToStore(ctx, user)
+
+	return user, nil
 }
 
 func (s *Service) setUserToStore(ctx context.Context, entity *entities.User) {

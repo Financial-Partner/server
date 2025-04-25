@@ -12,6 +12,7 @@ const (
 	ErrInvalidRefreshToken          = "Invalid refresh token"
 	ErrFailedToCreateUser           = "Failed to create user"
 	ErrFailedToUpdateUser           = "Failed to update user"
+	ErrUserCharacterAlreadySet      = "User character already set"
 	ErrFailedToGetUser              = "Failed to get user"
 	ErrFailedToLogout               = "Failed to logout"
 	ErrFailedToGetGoalSuggestion    = "Failed to get goal suggestion"

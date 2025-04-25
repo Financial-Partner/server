@@ -896,6 +896,70 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/me/character": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the current user's character",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "UpdateUserCharacter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Update user character request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdateUserCharacterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Update user character successfully",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request format",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/me/investments": {
             "get": {
                 "description": "Get user investments",
@@ -1615,6 +1679,23 @@ const docTemplate = `{
                 "updated_at": {
                     "type": "string",
                     "example": "2023-06-01T00:00:00Z"
+                }
+            }
+        },
+        "dto.UpdateUserCharacterRequest": {
+            "type": "object",
+            "required": [
+                "character_id",
+                "image_url"
+            ],
+            "properties": {
+                "character_id": {
+                    "type": "string",
+                    "example": "char_001"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://example.com/characters/advisor.png"
                 }
             }
         },

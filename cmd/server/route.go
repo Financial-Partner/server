@@ -52,6 +52,7 @@ func setupProtectedRoutes(router *mux.Router, handlers *handler.Handler) {
 	userRoutes := router.PathPrefix("/users").Subrouter()
 	userRoutes.HandleFunc("/me", handlers.GetUser).Methods(http.MethodGet)
 	userRoutes.HandleFunc("/me", handlers.UpdateUser).Methods(http.MethodPut)
+	userRoutes.HandleFunc("/me/character", handlers.UpdateUserCharacter).Methods(http.MethodPut)
 
 	goalRoutes := router.PathPrefix("/goals").Subrouter()
 	goalRoutes.HandleFunc("", handlers.CreateGoal).Methods(http.MethodPost)

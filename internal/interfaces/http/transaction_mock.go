@@ -58,16 +58,16 @@ func (mr *MockTransactionServiceMockRecorder) CreateTransaction(ctx, UserID, tra
 }
 
 // GetTransactions mocks base method.
-func (m *MockTransactionService) GetTransactions(ctx context.Context, UserId string) ([]entities.Transaction, error) {
+func (m *MockTransactionService) GetTransactions(ctx context.Context, UserID string) ([]entities.Transaction, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTransactions", ctx, UserId)
+	ret := m.ctrl.Call(m, "GetTransactions", ctx, UserID)
 	ret0, _ := ret[0].([]entities.Transaction)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetTransactions indicates an expected call of GetTransactions.
-func (mr *MockTransactionServiceMockRecorder) GetTransactions(ctx, UserId any) *gomock.Call {
+func (mr *MockTransactionServiceMockRecorder) GetTransactions(ctx, UserID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactions", reflect.TypeOf((*MockTransactionService)(nil).GetTransactions), ctx, UserId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTransactions", reflect.TypeOf((*MockTransactionService)(nil).GetTransactions), ctx, UserID)
 }

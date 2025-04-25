@@ -19,6 +19,7 @@ type UserService interface {
 	GetUser(ctx context.Context, email string) (*entities.User, error)
 	GetOrCreateUser(ctx context.Context, email, name string) (*entities.User, error)
 	UpdateUserName(ctx context.Context, id, name string) (*entities.User, error)
+	UpdateUserCharacter(ctx context.Context, email, characterID, imageURL string) (*entities.User, error)
 }
 
 // UpdateUser UpdateUser
@@ -104,6 +105,60 @@ func (h *Handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := buildUserResponse(userEntity, scopes)
+
+	respond.WithJSON(w, r, response, http.StatusOK)
+}
+
+// UpdateUserCharacter UpdateUserCharacter
+// @Summary UpdateUserCharacter
+// @Description Update the current user's character
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param Authorization header string true "Bearer {token}" default "Bearer "
+// @Param request body dto.UpdateUserCharacterRequest true "Update user character request"
+// @Success 200 {object} dto.GetUserResponse "Update user character successfully"
+// @Failure 400 {object} dto.ErrorResponse "Invalid request format"
+// @Failure 401 {object} dto.ErrorResponse "Unauthorized"
+// @Failure 500 {object} dto.ErrorResponse "Internal server error"
+// @Router /users/me/character [put]
+func (h *Handler) UpdateUserCharacter(w http.ResponseWriter, r *http.Request) {
+	email, ok := contextutil.GetUserEmail(r.Context())
+	if !ok {
+		h.log.Errorf("User email not found in context")
+		respond.WithError(w, r, h.log, nil, httperror.ErrEmailNotFound, http.StatusInternalServerError)
+		return
+	}
+
+	userEntity, err := h.userService.GetUser(r.Context(), email)
+	if err != nil {
+		h.log.WithError(err).Errorf("Failed to get user")
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToGetUser, http.StatusInternalServerError)
+		return
+	}
+
+	if userEntity.Character.ID != "" {
+		h.log.Errorf("User character already set")
+		respond.WithError(w, r, h.log, nil, httperror.ErrUserCharacterAlreadySet, http.StatusBadRequest)
+		return
+	}
+
+	var req dto.UpdateUserCharacterRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.log.WithError(err).Warnf("Invalid request format")
+		respond.WithError(w, r, h.log, err, httperror.ErrInvalidRequest, http.StatusBadRequest)
+		return
+	}
+
+	updatedUser, err := h.userService.UpdateUserCharacter(r.Context(), email, req.CharacterID, req.ImageURL)
+	if err != nil {
+		h.log.WithError(err).Errorf("Failed to update user character")
+		respond.WithError(w, r, h.log, err, httperror.ErrFailedToUpdateUser, http.StatusInternalServerError)
+		return
+	}
+
+	response := buildUserResponse(updatedUser, nil)
 
 	respond.WithJSON(w, r, response, http.StatusOK)
 }

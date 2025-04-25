@@ -440,6 +440,18 @@ definitions:
     - description
     - transaction_type
     type: object
+  dto.UpdateUserCharacterRequest:
+    properties:
+      character_id:
+        example: char_001
+        type: string
+      image_url:
+        example: https://example.com/characters/advisor.png
+        type: string
+    required:
+    - character_id
+    - image_url
+    type: object
   dto.UpdateUserRequest:
     properties:
       name:
@@ -1086,6 +1098,47 @@ paths:
       security:
       - BearerAuth: []
       summary: UpdateUser
+      tags:
+      - users
+  /users/me/character:
+    put:
+      consumes:
+      - application/json
+      description: Update the current user's character
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Update user character request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserCharacterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Update user character successfully
+          schema:
+            $ref: '#/definitions/dto.GetUserResponse'
+        "400":
+          description: Invalid request format
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: UpdateUserCharacter
       tags:
       - users
   /users/me/investments:

@@ -18,6 +18,11 @@ type UpdateUserRequest struct {
 	Name string `json:"name" binding:"required" example:"New User Name"`
 }
 
+type UpdateUserCharacterRequest struct {
+	CharacterID string `json:"character_id" binding:"required" example:"char_001"`
+	ImageURL    string `json:"image_url" binding:"required" example:"https://example.com/characters/advisor.png"`
+}
+
 type UpdateUserResponse struct {
 	ID        string `json:"id" example:"60d6ec33f777b123e4567890"`
 	Email     string `json:"email" example:"user@example.com"`

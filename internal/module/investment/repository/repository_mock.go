@@ -56,6 +56,21 @@ func (mr *MockRepositoryMockRecorder) CreateInvestment(ctx, entity any) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateInvestment", reflect.TypeOf((*MockRepository)(nil).CreateInvestment), ctx, entity)
 }
 
+// CreateOpportunity mocks base method.
+func (m *MockRepository) CreateOpportunity(ctx context.Context, entity *entities.Opportunity) (*entities.Opportunity, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateOpportunity", ctx, entity)
+	ret0, _ := ret[0].(*entities.Opportunity)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateOpportunity indicates an expected call of CreateOpportunity.
+func (mr *MockRepositoryMockRecorder) CreateOpportunity(ctx, entity any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOpportunity", reflect.TypeOf((*MockRepository)(nil).CreateOpportunity), ctx, entity)
+}
+
 // FindInvestmentsByUserId mocks base method.
 func (m *MockRepository) FindInvestmentsByUserId(ctx context.Context, userID string) ([]entities.Investment, error) {
 	m.ctrl.T.Helper()

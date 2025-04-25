@@ -22,7 +22,7 @@ func (v *DummyJWTValidator) ValidateToken(tokenString string) (*Claims, error) {
 	}
 
 	return &Claims{
-		ID:    "test-id",
+		ID:    "680bc51354f0a75ad544ff79",
 		Email: "bypass@example.com",
 	}, nil
 }
