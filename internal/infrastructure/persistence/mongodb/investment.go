@@ -9,17 +9,17 @@ import (
 	"github.com/Financial-Partner/server/internal/entities"
 )
 
-type MongoInvestmentResporitory struct {
+type MongoInvestmentRepository struct {
 	collection *mongo.Collection
 }
 
-func NewInvestmentRepository(db MongoClient) *MongoInvestmentResporitory {
-	return &MongoInvestmentResporitory{
+func NewInvestmentRepository(db MongoClient) *MongoInvestmentRepository {
+	return &MongoInvestmentRepository{
 		collection: db.Collection("investments"),
 	}
 }
 
-func (r *MongoInvestmentResporitory) CreateInvestment(ctx context.Context, entity *entities.Investment) (*entities.Investment, error) {
+func (r *MongoInvestmentRepository) CreateInvestment(ctx context.Context, entity *entities.Investment) (*entities.Investment, error) {
 	_, err := r.collection.InsertOne(ctx, entity)
 	if err != nil {
 		return nil, err
@@ -27,7 +27,7 @@ func (r *MongoInvestmentResporitory) CreateInvestment(ctx context.Context, entit
 	return entity, nil
 }
 
-func (r *MongoInvestmentResporitory) CreateOpportunity(ctx context.Context, entity *entities.Opportunity) (*entities.Opportunity, error) {
+func (r *MongoInvestmentRepository) CreateOpportunity(ctx context.Context, entity *entities.Opportunity) (*entities.Opportunity, error) {
 	_, err := r.collection.InsertOne(ctx, entity)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (r *MongoInvestmentResporitory) CreateOpportunity(ctx context.Context, enti
 	return entity, nil
 }
 
-func (r *MongoInvestmentResporitory) FindOpportunitiesByUserId(ctx context.Context, userID string) ([]entities.Opportunity, error) {
+func (r *MongoInvestmentRepository) FindOpportunitiesByUserId(ctx context.Context, userID string) ([]entities.Opportunity, error) {
 	var opportunities []entities.Opportunity
 	cursor, err := r.collection.Find(ctx, bson.M{"user_id": userID})
 	if err != nil {
@@ -50,7 +50,7 @@ func (r *MongoInvestmentResporitory) FindOpportunitiesByUserId(ctx context.Conte
 	return opportunities, nil
 }
 
-func (r *MongoInvestmentResporitory) FindInvestmentsByUserId(ctx context.Context, userID string) ([]entities.Investment, error) {
+func (r *MongoInvestmentRepository) FindInvestmentsByUserId(ctx context.Context, userID string) ([]entities.Investment, error) {
 	var investments []entities.Investment
 	cursor, err := r.collection.Find(ctx, bson.M{"user_id": userID})
 	if err != nil {
